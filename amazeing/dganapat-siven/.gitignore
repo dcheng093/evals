@@ -1,0 +1,17 @@
+# Python caches and compiled files
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.pytest_cache/
+
+# Virtual environment
+venv/
+
+# Intermediate build byproducts (NOT the distribution itself, see below)
+build/
+*.egg-info/
+
+# DELIBERATELY NOT IGNORED: *.whl and *.tar.gz
+# The subject requires the built mazegen-* distribution to be committed at the
+# root of the git repository, so the artifacts must stay tracked. Every stock
+# Python .gitignore excludes them -- do not "fix" this file by adding them back.

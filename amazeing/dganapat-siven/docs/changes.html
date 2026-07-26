@@ -1,0 +1,1652 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mazegen — what changed</title>
+<style>
+  :root {
+    --bg:#fbfbfa; --panel:#fff; --ink:#1a1a19; --muted:#6b6b66; --line:#e3e2de;
+    --add-bg:#e6f4ea; --add-ink:#12502a; --del-bg:#fce8e8; --del-ink:#7a1c1c;
+    --hunk:#5b4bb8; --meta:#8a8a84; --accent:#b4531f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#16161a; --panel:#1d1d22; --ink:#e8e8e4; --muted:#9a9a94; --line:#31313a;
+      --add-bg:#16341f; --add-ink:#8fdca8; --del-bg:#3a1a1c; --del-ink:#f0a0a0;
+      --hunk:#a99cf0; --meta:#7a7a74; --accent:#e8895a;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:#16161a; --panel:#1d1d22; --ink:#e8e8e4; --muted:#9a9a94; --line:#31313a;
+    --add-bg:#16341f; --add-ink:#8fdca8; --del-bg:#3a1a1c; --del-ink:#f0a0a0;
+    --hunk:#a99cf0; --meta:#7a7a74; --accent:#e8895a;
+  }
+  :root[data-theme="light"] {
+    --bg:#fbfbfa; --panel:#fff; --ink:#1a1a19; --muted:#6b6b66; --line:#e3e2de;
+    --add-bg:#e6f4ea; --add-ink:#12502a; --del-bg:#fce8e8; --del-ink:#7a1c1c;
+    --hunk:#5b4bb8; --meta:#8a8a84; --accent:#b4531f;
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--bg); color:var(--ink);
+    font:15px/1.6 ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;
+  }
+  .wrap { display:grid; grid-template-columns:250px minmax(0,1fr); gap:2.5rem;
+    max-width:1180px; margin:0 auto; padding:2.5rem 1.5rem 6rem; }
+  nav { position:sticky; top:2.5rem; align-self:start; font-size:13px; }
+  .navgroup { margin:1.2rem 0 .4rem; font-weight:650; color:var(--muted);
+    text-transform:uppercase; letter-spacing:.06em; font-size:11px; }
+  .navgroup:first-child { margin-top:0; }
+  nav a { display:block; padding:.2rem 0; color:var(--ink);
+    text-decoration:none; border-left:2px solid transparent; padding-left:.6rem; }
+  nav a:hover { border-left-color:var(--accent); color:var(--accent); }
+  h1 { font-size:1.9rem; margin:0 0 .3rem; letter-spacing:-.02em; }
+  .sub { color:var(--muted); margin:0 0 2rem; }
+  h2 { font-size:1.25rem; margin:3rem 0 .5rem; padding-bottom:.4rem;
+    border-bottom:1px solid var(--line); }
+  h3 { font-size:1rem; margin:2rem 0 .2rem; }
+  code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.88em; }
+  .note { color:var(--muted); margin:.1rem 0 .7rem; font-size:13.5px; }
+  .diff, pre.stat {
+    background:var(--panel); border:1px solid var(--line); border-radius:7px;
+    overflow-x:auto; padding:.6rem 0; font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:12.5px; line-height:1.55;
+  }
+  pre.stat { padding:.9rem 1rem; margin:0 0 1rem; }
+  .l { padding:0 1rem; white-space:pre; }
+  .add { background:var(--add-bg); color:var(--add-ink); }
+  .del { background:var(--del-bg); color:var(--del-ink); }
+  .hunk { color:var(--hunk); font-weight:600; }
+  .meta { color:var(--meta); }
+  .callout { border-left:3px solid var(--accent); background:var(--panel);
+    padding:.8rem 1rem; border-radius:0 6px 6px 0; margin:1rem 0; }
+  .callout p { margin:.3rem 0; }
+  ul { padding-left:1.2rem; }
+  @media (max-width:860px) {
+    .wrap { grid-template-columns:1fr; }
+    nav { position:static; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav><div class="navgroup">Packaging &amp; build config</div>
+<a href="#pyproject-toml"><code>pyproject.toml</code></a>
+<a href="#Makefile"><code>Makefile</code></a>
+<a href="#-gitignore"><code>.gitignore</code></a>
+<div class="navgroup">Documentation</div>
+<a href="#LICENSE-md"><code>LICENSE.md</code></a>
+<a href="#mazegen-README-md"><code>mazegen/README.md</code></a>
+<a href="#README-md"><code>README.md</code></a>
+<div class="navgroup">Package &amp; code</div>
+<a href="#mazegen-__init__-py"><code>mazegen/__init__.py</code></a>
+<a href="#mazegen-maze-py"><code>mazegen/maze.py</code></a>
+<a href="#mazegen-generator-py"><code>mazegen/generator.py</code></a>
+<a href="#mazegen-solver-py"><code>mazegen/solver.py</code></a>
+<a href="#a_maze_ing-py"><code>a_maze_ing.py</code></a>
+<a href="#mazegen_config-py"><code>mazegen_config.py</code></a>
+<a href="#mazegen_display-py"><code>mazegen_display.py</code></a></nav>
+<main>
+  <h1>mazegen — what changed</h1>
+  <p class="sub">Commit <code>7b37788</code> on <code>feat/mazegen-package-docs-license</code>.
+  Every diff below is generated from the commit itself.</p>
+
+  <pre class="stat">.gitignore                                   |  17 +
+ LICENSE.md                                   |  21 +-
+ Makefile                                     |  10 +-
+ README.md                                    | 555 ++++++++++++++++++++++++---
+ a_maze_ing.py                                |  24 +-
+ maze.txt                                     |  32 +-
+ mazegen-1.0.0-py3-none-any.whl               | Bin 0 -&gt; 12531 bytes
+ mazegen-1.0.0.tar.gz                         | Bin 0 -&gt; 13939 bytes
+ mazegen/README.md                            | 162 ++++++++
+ mazegen/__init__.py                          |  13 +
+ mazegen_generator.py =&gt; mazegen/generator.py |  67 ++--
+ mazegen_maze.py =&gt; mazegen/maze.py           |  16 +-
+ mazegen_solver.py =&gt; mazegen/solver.py       |  12 +-
+ mazegen_config.py                            |  51 ++-
+ mazegen_display.py                           |   7 +-
+ pyproject.toml                               |  11 +-
+ 16 files changed, 852 insertions(+), 146 deletions(-)</pre>
+
+  <div class="callout">
+    <p><strong>Two changes that go beyond the tickets.</strong></p>
+    <p>1. <code>a_maze_ing.py</code> gained a <code>generator.maze is None</code> guard
+    that exits 1. Unreachable in practice — <code>create_maze()</code> raises first —
+    added to satisfy mypy.</p>
+    <p>2. Most of the <code>mazegen_config.py</code> and <code>a_maze_ing.py</code> diff is
+    line wrapping, whitespace and annotation fixes. <code>make lint</code> was already
+    failing at <code>init</code> with 52 flake8 + 5 mypy errors; ticket 01 required it
+    green, so the pre-existing debt was cleared. Output diffed byte-identical
+    against the old code on the same config.</p>
+  </div>
+
+  <div class="callout">
+    <p><strong>Still open.</strong></p>
+    <p>Three visible placeholders in <code>README.md</code>: the repository clone URL
+    (no git remote is configured), the algorithm-choice justification, and the classic
+    references — the last two addressed to dganapat.</p>
+  </div>
+
+  <h2 id="config">Packaging &amp; build config</h2>
+<section id="pyproject-toml"><h3><code>pyproject.toml</code></h3><p class="note">Package metadata: version, license, readme, discovery</p><div class="diff"><div class="l meta">diff --git a/pyproject.toml b/pyproject.toml</div>
+<div class="l meta">index 98e76b4..3248531 100644</div>
+<div class="l meta">--- a/pyproject.toml</div>
+<div class="l meta">+++ b/pyproject.toml</div>
+<div class="l hunk">@@ -1,15 +1,18 @@</div>
+<div class="l ctx"> [build-system]</div>
+<div class="l del">-requires = [&quot;setuptools&gt;=61.0&quot;]</div>
+<div class="l add">+requires = [&quot;setuptools&gt;=77.0&quot;]</div>
+<div class="l ctx"> build-backend = &quot;setuptools.build_meta&quot;</div>
+<div class="l ctx"> </div>
+<div class="l ctx"> [project]</div>
+<div class="l ctx"> name = &quot;mazegen&quot;  # Must match the mazegen-* naming rule</div>
+<div class="l del">-version = &quot;0.1.0&quot;</div>
+<div class="l add">+version = &quot;1.0.0&quot;</div>
+<div class="l ctx"> description = &quot;A maze generator module&quot;</div>
+<div class="l del">-readme = &quot;README.md&quot;</div>
+<div class="l add">+readme = &quot;mazegen/README.md&quot;</div>
+<div class="l ctx"> requires-python = &quot;&gt;=3.10&quot;</div>
+<div class="l del">-license = { file = &quot;LICENSE.md&quot; }</div>
+<div class="l add">+license = &quot;MIT&quot;</div>
+<div class="l add">+license-files = [&quot;LICENSE.md&quot;]</div>
+<div class="l ctx"> dependencies = []</div>
+<div class="l ctx"> </div>
+<div class="l ctx"> [tool.setuptools.packages.find]</div>
+<div class="l ctx"> where = [&quot;.&quot;]</div>
+<div class="l add">+# Restricted to mazegen* so discovery can never sweep venv/ into the build</div>
+<div class="l add">+include = [&quot;mazegen*&quot;]</div></div></section>
+<section id="Makefile"><h3><code>Makefile</code></h3><p class="note">New build/reinstall targets, install order fixed</p><div class="diff"><div class="l meta">diff --git a/Makefile b/Makefile</div>
+<div class="l meta">index 9ddba6d..e96a5b0 100644</div>
+<div class="l meta">--- a/Makefile</div>
+<div class="l meta">+++ b/Makefile</div>
+<div class="l hunk">@@ -6,10 +6,16 @@ MAIN = a_maze_ing.py</div>
+<div class="l ctx"> </div>
+<div class="l ctx"> install: # Install dependencies</div>
+<div class="l ctx"> 	python3 -m venv $(VENV)</div>
+<div class="l del">-	$(PIP) install mypy flake8</div>
+<div class="l ctx"> 	$(PIP) install --upgrade pip</div>
+<div class="l add">+	$(PIP) install mypy flake8 build</div>
+<div class="l ctx"> # source venv/bin/activate</div>
+<div class="l ctx"> </div>
+<div class="l add">+build: # Build the wheel and sdist directly at the repository root</div>
+<div class="l add">+	$(PYTHON) -m build --outdir .</div>
+<div class="l add">+</div>
+<div class="l add">+reinstall: build # Rebuild and reinstall the package in one command</div>
+<div class="l add">+	$(PIP) install --force-reinstall mazegen-1.0.0-py3-none-any.whl</div>
+<div class="l add">+</div>
+<div class="l ctx"> run: # Run the project</div>
+<div class="l ctx"> 	$(PYTHON) $(MAIN) config.txt</div>
+<div class="l ctx"> </div>
+<div class="l hunk">@@ -38,4 +44,4 @@ lint-strict: # Run strict mypy checks</div>
+<div class="l ctx"> uninstall: clean</div>
+<div class="l ctx"> 		rm -rf venv</div>
+<div class="l ctx"> </div>
+<div class="l del">-.PHONY: install run debug clean lint lint-strict uninstall</div>
+<div class="l meta">\ No newline at end of file</div>
+<div class="l add">+.PHONY: install build reinstall run debug clean lint lint-strict uninstall</div>
+<div class="l meta">\ No newline at end of file</div></div></section>
+<section id="-gitignore"><h3><code>.gitignore</code></h3><p class="note">New file — caches and venv, artifacts deliberately kept</p><div class="diff"><div class="l meta">diff --git a/.gitignore b/.gitignore</div>
+<div class="l meta">new file mode 100644</div>
+<div class="l meta">index 0000000..6ce4aa1</div>
+<div class="l meta">--- /dev/null</div>
+<div class="l meta">+++ b/.gitignore</div>
+<div class="l hunk">@@ -0,0 +1,17 @@</div>
+<div class="l add">+# Python caches and compiled files</div>
+<div class="l add">+__pycache__/</div>
+<div class="l add">+*.py[cod]</div>
+<div class="l add">+.mypy_cache/</div>
+<div class="l add">+.pytest_cache/</div>
+<div class="l add">+</div>
+<div class="l add">+# Virtual environment</div>
+<div class="l add">+venv/</div>
+<div class="l add">+</div>
+<div class="l add">+# Intermediate build byproducts (NOT the distribution itself, see below)</div>
+<div class="l add">+build/</div>
+<div class="l add">+*.egg-info/</div>
+<div class="l add">+</div>
+<div class="l add">+# DELIBERATELY NOT IGNORED: *.whl and *.tar.gz</div>
+<div class="l add">+# The subject requires the built mazegen-* distribution to be committed at the</div>
+<div class="l add">+# root of the git repository, so the artifacts must stay tracked. Every stock</div>
+<div class="l add">+# Python .gitignore excludes them -- do not &quot;fix&quot; this file by adding them back.</div></div></section>
+<h2 id="docs">Documentation</h2>
+<section id="LICENSE-md"><h3><code>LICENSE.md</code></h3><p class="note">Truncated clause replaced with complete MIT text</p><div class="diff"><div class="l meta">diff --git a/LICENSE.md b/LICENSE.md</div>
+<div class="l meta">index 1f2e1ec..39a99cc 100644</div>
+<div class="l meta">--- a/LICENSE.md</div>
+<div class="l meta">+++ b/LICENSE.md</div>
+<div class="l hunk">@@ -1,6 +1,21 @@</div>
+<div class="l del">-# License</div>
+<div class="l add">+MIT License</div>
+<div class="l ctx"> </div>
+<div class="l del">-Copyright (c) 2026 Dinesh Ganapathy</div>
+<div class="l add">+Copyright (c) 2026 Dinesh Ganapathy and si-wong</div>
+<div class="l ctx"> </div>
+<div class="l ctx"> Permission is hereby granted, free of charge, to any person obtaining a copy</div>
+<div class="l del">-Allowed to reuse and modify</div>
+<div class="l add">+of this software and associated documentation files (the &quot;Software&quot;), to deal</div>
+<div class="l add">+in the Software without restriction, including without limitation the rights</div>
+<div class="l add">+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</div>
+<div class="l add">+copies of the Software, and to permit persons to whom the Software is</div>
+<div class="l add">+furnished to do so, subject to the following conditions:</div>
+<div class="l add">+</div>
+<div class="l add">+The above copyright notice and this permission notice shall be included in all</div>
+<div class="l add">+copies or substantial portions of the Software.</div>
+<div class="l add">+</div>
+<div class="l add">+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</div>
+<div class="l add">+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</div>
+<div class="l add">+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</div>
+<div class="l add">+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</div>
+<div class="l add">+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</div>
+<div class="l add">+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</div>
+<div class="l add">+SOFTWARE.</div></div></section>
+<section id="mazegen-README-md"><h3><code>mazegen/README.md</code></h3><p class="note">New — module documentation shipped inside the wheel</p><div class="diff"><div class="l meta">diff --git a/mazegen/README.md b/mazegen/README.md</div>
+<div class="l meta">new file mode 100644</div>
+<div class="l meta">index 0000000..787b2ff</div>
+<div class="l meta">--- /dev/null</div>
+<div class="l meta">+++ b/mazegen/README.md</div>
+<div class="l hunk">@@ -0,0 +1,162 @@</div>
+<div class="l add">+# mazegen</div>
+<div class="l add">+</div>
+<div class="l add">+A standalone maze generator: builds a rectangular maze, solves it, and encodes</div>
+<div class="l add">+it for output.</div>
+<div class="l add">+</div>
+<div class="l add">+**Requires Python 3.10 or newer. It needs nothing beyond the standard</div>
+<div class="l add">+library** — `mazegen` declares no dependencies, and installing it pulls nothing</div>
+<div class="l add">+else in.</div>
+<div class="l add">+</div>
+<div class="l add">+## Install</div>
+<div class="l add">+</div>
+<div class="l add">+```sh</div>
+<div class="l add">+pip install mazegen-1.0.0-py3-none-any.whl</div>
+<div class="l add">+```</div>
+<div class="l add">+</div>
+<div class="l add">+## Complete example</div>
+<div class="l add">+</div>
+<div class="l add">+```python</div>
+<div class="l add">+from mazegen import (</div>
+<div class="l add">+    MazeGenerator,</div>
+<div class="l add">+    bfs_solve_maze,</div>
+<div class="l add">+    encode_maze_to_hex,</div>
+<div class="l add">+    path_to_direction,</div>
+<div class="l add">+)</div>
+<div class="l add">+</div>
+<div class="l add">+generator = MazeGenerator(</div>
+<div class="l add">+    height=15,</div>
+<div class="l add">+    width=20,</div>
+<div class="l add">+    entry=(0, 0),</div>
+<div class="l add">+    exit=(19, 14),</div>
+<div class="l add">+    perfect=False,</div>
+<div class="l add">+    seed=42,</div>
+<div class="l add">+)</div>
+<div class="l add">+</div>
+<div class="l add">+maze = generator.create_maze()</div>
+<div class="l add">+</div>
+<div class="l add">+# The maze structure: a grid of (2 * height + 1) x (2 * width + 1) integers.</div>
+<div class="l add">+print(&quot;cells:&quot;, maze.width, &quot;x&quot;, maze.height)</div>
+<div class="l add">+print(&quot;grid: &quot;, maze.grid_width, &quot;x&quot;, maze.grid_height)</div>
+<div class="l add">+print(&quot;cell (0, 0) is open:&quot;, maze.grid[1][1] == 0)</div>
+<div class="l add">+print(&quot;top-left corner is a wall:&quot;, maze.grid[0][0] == 1)</div>
+<div class="l add">+</div>
+<div class="l add">+# The solution: shortest path (BFS), as a list of (x, y) cell coordinates.</div>
+<div class="l add">+path, explored = bfs_solve_maze(maze)</div>
+<div class="l add">+print(&quot;path length:&quot;, len(path), &quot;cells&quot;)</div>
+<div class="l add">+print(&quot;first three steps:&quot;, path[:3])</div>
+<div class="l add">+print(&quot;directions:&quot;, path_to_direction(path))</div>
+<div class="l add">+print(&quot;cells visited while searching:&quot;, len(explored))</div>
+<div class="l add">+</div>
+<div class="l add">+# create_maze() already solved it: the same values are cached on the generator.</div>
+<div class="l add">+print(&quot;cached path matches:&quot;, generator.path == path)</div>
+<div class="l add">+</div>
+<div class="l add">+# The hexadecimal encoding is a separate, file-facing representation.</div>
+<div class="l add">+print(&quot;first hex row:&quot;, encode_maze_to_hex(maze)[0])</div>
+<div class="l add">+```</div>
+<div class="l add">+</div>
+<div class="l add">+Output:</div>
+<div class="l add">+</div>
+<div class="l add">+```</div>
+<div class="l add">+cells: 20 x 15</div>
+<div class="l add">+grid:  41 x 31</div>
+<div class="l add">+cell (0, 0) is open: True</div>
+<div class="l add">+top-left corner is a wall: True</div>
+<div class="l add">+path length: 75 cells</div>
+<div class="l add">+first three steps: [(0, 0), (0, 1), (0, 1)]</div>
+<div class="l add">+directions: SSSEEESESEESESSSSSESSESENESEENESEEEEE</div>
+<div class="l add">+cells visited while searching: 540</div>
+<div class="l add">+cached path matches: True</div>
+<div class="l add">+first hex row: 93913913951391155393</div>
+<div class="l add">+```</div>
+<div class="l add">+</div>
+<div class="l add">+## Constructor parameters</div>
+<div class="l add">+</div>
+<div class="l add">+`MazeGenerator(height, width, entry, exit, perfect, seed=None)`</div>
+<div class="l add">+</div>
+<div class="l add">+| Parameter | Type | Default | Meaning |</div>
+<div class="l add">+|---|---|---|---|</div>
+<div class="l add">+| `height` | `int` | *required* | Number of cell rows. |</div>
+<div class="l add">+| `width` | `int` | *required* | Number of cell columns. |</div>
+<div class="l add">+| `entry` | `tuple[int, int]` | *required* | Start cell as `(x, y)`: `x` in `0..width-1`, `y` in `0..height-1`. |</div>
+<div class="l add">+| `exit` | `tuple[int, int]` | *required* | Goal cell as `(x, y)`, same ranges as `entry`. |</div>
+<div class="l add">+| `perfect` | `bool` | *required* | `True` leaves the maze perfect: no loops, so any two connected cells have exactly one route between them. `False` removes dead ends, adds loops, and forces the four corners and the centre cell open and reachable. |</div>
+<div class="l add">+| `seed` | `int \| None` | `None` | Seeds the generator for reproducible mazes. The same seed with the same other arguments gives the same maze. `None` leaves the random module unseeded, so every run differs. |</div>
+<div class="l add">+</div>
+<div class="l add">+Only `seed` has a default; the other five are required. Note that a seed is</div>
+<div class="l add">+applied with `random.seed()`, which seeds the standard library&#x27;s global random</div>
+<div class="l add">+state, not a private one.</div>
+<div class="l add">+</div>
+<div class="l add">+`create_maze()` returns the `Maze` and raises `ValueError` if it cannot produce</div>
+<div class="l add">+a valid maze within 1000 attempts.</div>
+<div class="l add">+</div>
+<div class="l add">+## Reaching the maze structure</div>
+<div class="l add">+</div>
+<div class="l add">+`create_maze()` returns the `Maze`, and also stores it on the generator as</div>
+<div class="l add">+`generator.maze` (`None` before the first call).</div>
+<div class="l add">+</div>
+<div class="l add">+A `Maze` carries:</div>
+<div class="l add">+</div>
+<div class="l add">+| Attribute | Meaning |</div>
+<div class="l add">+|---|---|</div>
+<div class="l add">+| `height`, `width` | Cell dimensions, as passed to the constructor. |</div>
+<div class="l add">+| `entry`, `exit` | Cell coordinates, as passed to the constructor. |</div>
+<div class="l add">+| `grid_height`, `grid_width` | `2 * height + 1` and `2 * width + 1`. |</div>
+<div class="l add">+| `grid` | The maze itself: `list[list[int]]`, indexed `grid[row][column]` — that is, `grid[y][x]`. |</div>
+<div class="l add">+</div>
+<div class="l add">+The grid is a wall-and-cell layout: rows and columns alternate between cells</div>
+<div class="l add">+and the walls separating them. Odd coordinates are cells, even coordinates are</div>
+<div class="l add">+walls, and the outermost ring is always solid border. Cell `(x, y)` sits at</div>
+<div class="l add">+`grid[2 * y + 1][2 * x + 1]`, and the wall between two horizontally adjacent</div>
+<div class="l add">+cells sits at the even column between them.</div>
+<div class="l add">+</div>
+<div class="l add">+Each grid entry holds one of three values:</div>
+<div class="l add">+</div>
+<div class="l add">+| Value | Meaning |</div>
+<div class="l add">+|---|---|</div>
+<div class="l add">+| `0` | Open — a corridor you can walk through. |</div>
+<div class="l add">+| `1` | Wall. |</div>
+<div class="l add">+| `2` | Wall belonging to the &quot;42&quot; logo stamped into the centre. Solid like `1`; the separate value only marks it as permanent so generation never carves through it. |</div>
+<div class="l add">+</div>
+<div class="l add">+### The grid is not the hexadecimal encoding</div>
+<div class="l add">+</div>
+<div class="l add">+`encode_maze_to_hex(maze)` returns a *different* representation: one string per</div>
+<div class="l add">+cell row, one hexadecimal digit per cell, `height` strings of `width`</div>
+<div class="l add">+characters. Each digit is a bitmask of that cell&#x27;s four walls — north `1`,</div>
+<div class="l add">+east `2`, south `4`, west `8` — so `f` is a fully walled cell and `0` a fully</div>
+<div class="l add">+open one.</div>
+<div class="l add">+</div>
+<div class="l add">+That encoding is what the output file contains. It is derived from `maze.grid`</div>
+<div class="l add">+but is not the same thing, and neither has the other&#x27;s dimensions: the grid is</div>
+<div class="l add">+`(2 * height + 1) x (2 * width + 1)` integers with walls as their own entries,</div>
+<div class="l add">+while the hex form is `height x width` digits with walls folded into each</div>
+<div class="l add">+cell&#x27;s bits. Read `maze.grid` to inspect a maze in memory; read the hex rows to</div>
+<div class="l add">+understand a written file.</div>
+<div class="l add">+</div>
+<div class="l add">+## Reaching a solution</div>
+<div class="l add">+</div>
+<div class="l add">+`bfs_solve_maze(maze)` returns `(path, explored)`. `create_maze()` already</div>
+<div class="l add">+calls it, so the same two lists are available as `generator.path` and</div>
+<div class="l add">+`generator.explored` without solving again.</div>
+<div class="l add">+</div>
+<div class="l add">+`path` is **the shortest path** from `entry` to `exit`: the solver is a</div>
+<div class="l add">+breadth-first search, which visits cells in order of distance from the entry,</div>
+<div class="l add">+so the first route it reaches the exit by is a minimal one. It is empty if the</div>
+<div class="l add">+exit is unreachable. `explored` is every cell BFS visited on the way, in visit</div>
+<div class="l add">+order — useful for animating or debugging the search, not part of the answer.</div>
+<div class="l add">+</div>
+<div class="l add">+Both lists are `(x, y)` cell coordinates. They are converted down from the</div>
+<div class="l add">+grid, which includes the wall positions the search stepped through, so</div>
+<div class="l add">+consecutive entries repeat: a 38-cell route comes back as 75 entries.</div>
+<div class="l add">+`path_to_direction(path)` collapses that into the move string —</div>
+<div class="l add">+`&quot;SSSEEESES...&quot;` using `N`, `E`, `S`, `W` — which is what the repeated entries</div>
+<div class="l add">+are there for.</div>
+<div class="l add">+</div>
+<div class="l add">+## Public API</div>
+<div class="l add">+</div>
+<div class="l add">+Everything below is importable directly from `mazegen`:</div>
+<div class="l add">+</div>
+<div class="l add">+- `MazeGenerator` — the generator class.</div>
+<div class="l add">+- `Maze` — the maze structure it produces.</div>
+<div class="l add">+- `bfs_solve_maze(maze)` — shortest path plus explored cells.</div>
+<div class="l add">+- `encode_maze_to_hex(maze)` — hexadecimal wall encoding, one string per row.</div>
+<div class="l add">+- `path_to_direction(path)` — path as a string of `N`/`E`/`S`/`W` moves.</div></div></section>
+<section id="README-md"><h3><code>README.md</code></h3><p class="note">Rewritten for Chapter VII</p><div class="diff"><div class="l meta">diff --git a/README.md b/README.md</div>
+<div class="l meta">index 1830fe7..770ba17 100644</div>
+<div class="l meta">--- a/README.md</div>
+<div class="l meta">+++ b/README.md</div>
+<div class="l hunk">@@ -4,89 +4,518 @@</div>
+<div class="l ctx"> </div>
+<div class="l ctx"> ## Description</div>
+<div class="l ctx"> </div>
+<div class="l del">-A-maze-ing is a project focused on maze generation, pathfinding, and algorithmic problem-solving. The goal is to create, manipulate, and solve mazes while developing efficient algorithms and clean, maintainable code.</div>
+<div class="l add">+A-maze-ing generates a rectangular maze, solves it, draws it in the terminal</div>
+<div class="l add">+and writes it to a file. A configuration file fixes the dimensions, the entry</div>
+<div class="l add">+and exit cells, the output file and whether the maze is *perfect* (exactly one</div>
+<div class="l add">+route between any two cells) or *playable* (loops, no dead ends — a board a</div>
+<div class="l add">+Pac-Man-like game could use). The &quot;42&quot; logo is stamped into the middle of every</div>
+<div class="l add">+maze and generation carves corridors around it.</div>
+<div class="l add">+</div>
+<div class="l add">+Running the program reads the config, generates and solves a maze, saves the</div>
+<div class="l add">+hexadecimal encoding plus the entry, exit and solution to the output file, then</div>
+<div class="l add">+opens an interactive menu that lets you re-generate, show or hide the shortest</div>
+<div class="l add">+path, cycle the wall colours, or quit.</div>
+<div class="l add">+</div>
+<div class="l add">+The maze generation itself lives in a standalone, installable Python package,</div>
+<div class="l add">+`mazegen`, which a different project can `pip install` and import on its own.</div>
+<div class="l ctx"> </div>
+<div class="l ctx"> ### Features</div>
+<div class="l ctx"> </div>
+<div class="l del">-    - Generate random mazes</div>
+<div class="l del">-    - Solve mazes using pathfinding algorithms</div>
+<div class="l del">-    - Display the generated maze</div>
+<div class="l del">-    - Validate maze integrity</div>
+<div class="l del">-    - Efficient memory management</div>
+<div class="l del">-    - Error handling for invalid input</div>
+<div class="l del">-</div>
+<div class="l del">-### Algorithm</div>
+<div class="l del">-</div>
+<div class="l del">-    - Depth-First Search (DFS)</div>
+<div class="l del">-    - Breadth-First Search (BFS)</div>
+<div class="l del">-</div>
+<div class="l del">-### Error Handling</div>
+<div class="l del">-</div>
+<div class="l del">-    - Config parsing (mazegen_config.py) rejects missing/duplicate keys,</div>
+<div class="l del">-      out-of-bounds ENTRY/EXIT coordinates, identical ENTRY/EXIT, and</div>
+<div class="l del">-      non-integer WIDTH/HEIGHT/SEED values with a line-numbered message</div>
+<div class="l del">-    - Missing config file raises a clear FileNotFoundError before generation starts</div>
+<div class="l del">-    - Maze generation retries up to 1000 times internally and raises a</div>
+<div class="l del">-      ValueError if no valid maze/path can be produced</div>
+<div class="l del">-    - Writing the output file catches IOError and reports it without crashing</div>
+<div class="l del">-    - The interactive menu catches KeyboardInterrupt/EOFError for a clean exit,</div>
+<div class="l del">-      and unexpected exceptions during a menu action are caught and printed</div>
+<div class="l del">-      without ending the session</div>
+<div class="l del">-</div>
+<div class="l del">-### Team Roles</div>
+<div class="l del">-</div>
+<div class="l del">-#### dganapat:</div>
+<div class="l del">-    - Maze generation algorithm</div>
+<div class="l del">-    - Pathfinding</div>
+<div class="l del">-    - User interaction</div>
+<div class="l del">-    - Docstrings</div>
+<div class="l del">-</div>
+<div class="l del">-#### si-wong:</div>
+<div class="l del">-    - Maze generation</div>
+<div class="l del">-    - Configure maze data</div>
+<div class="l del">-    - Makefile</div>
+<div class="l del">-    - Documentation</div>
+<div class="l add">+- Random maze generation with an optional seed for reproducible output</div>
+<div class="l add">+- Perfect mazes, or playable boards with loops and no dead ends</div>
+<div class="l add">+- The &quot;42&quot; logo carved into the centre of every maze</div>
+<div class="l add">+- Shortest-path solving, shown as a path overlay and as a direction string</div>
+<div class="l add">+- Coloured terminal rendering with switchable themes</div>
+<div class="l add">+- Hexadecimal output file with entry, exit and solution in the footer</div>
+<div class="l add">+- An output analyser that verifies a written maze file</div>
+<div class="l add">+- Configuration file parsing with line-numbered error messages</div>
+<div class="l add">+- Error handling for invalid input at every stage</div>
+<div class="l add">+- No dependencies outside the Python standard library</div>
+<div class="l ctx"> </div>
+<div class="l ctx"> ## Instructions</div>
+<div class="l ctx"> </div>
+<div class="l ctx"> ### Requirements</div>
+<div class="l ctx"> </div>
+<div class="l del">-    - Python 3.11 or later</div>
+<div class="l add">+- Python 3.10 or later</div>
+<div class="l add">+- `make`</div>
+<div class="l add">+- Nothing else at runtime: the project uses only the standard library. The</div>
+<div class="l add">+  development tools (`flake8`, `mypy`, `build`) are installed into a local</div>
+<div class="l add">+  virtual environment by `make install`.</div>
+<div class="l ctx"> </div>
+<div class="l del">-### Build</div>
+<div class="l add">+### Get the code</div>
+<div class="l ctx"> </div>
+<div class="l del">-Available Makefile targets:</div>
+<div class="l add">+&gt; **Placeholder — to fill in before submission:** this repository has no git</div>
+<div class="l add">+&gt; remote configured, so the clone URL cannot be stated honestly here. Replace</div>
+<div class="l add">+&gt; `&lt;REPOSITORY URL&gt;` below with the real one.</div>
+<div class="l ctx"> </div>
+<div class="l del">-    - make install</div>
+<div class="l del">-    - make run</div>
+<div class="l del">-    - make debug</div>
+<div class="l del">-    - make clean</div>
+<div class="l del">-    - make lint</div>
+<div class="l del">-    - make lint-strict</div>
+<div class="l add">+```bash</div>
+<div class="l add">+git clone &lt;REPOSITORY URL&gt;</div>
+<div class="l add">+cd amazingupgrade</div>
+<div class="l add">+```</div>
+<div class="l ctx"> </div>
+<div class="l ctx"> ### Run the program</div>
+<div class="l ctx"> </div>
+<div class="l del">-1. Clone the repository:</div>
+<div class="l add">+```bash</div>
+<div class="l add">+make install</div>
+<div class="l add">+make run</div>
+<div class="l add">+```</div>
+<div class="l add">+</div>
+<div class="l add">+`make install` creates the `venv/` virtual environment and installs the</div>
+<div class="l add">+development tools. `make run` runs `a_maze_ing.py` against `config.txt`.</div>
+<div class="l add">+</div>
+<div class="l add">+To use a different configuration file, run the main program directly:</div>
+<div class="l add">+</div>
+<div class="l add">+```bash</div>
+<div class="l add">+venv/bin/python3 a_maze_ing.py my_config.txt</div>
+<div class="l add">+```</div>
+<div class="l add">+</div>
+<div class="l add">+With no argument the program falls back to `config.txt`.</div>
+<div class="l add">+</div>
+<div class="l add">+### Makefile targets</div>
+<div class="l add">+</div>
+<div class="l add">+- `make install` — creates the `venv/` virtual environment, upgrades `pip`, and</div>
+<div class="l add">+  installs `mypy`, `flake8` and `build` into it.</div>
+<div class="l add">+- `make build` — builds the wheel and the source distribution of the `mazegen`</div>
+<div class="l add">+  package directly into the repository root, so the committed artifact and a</div>
+<div class="l add">+  rebuild from source are the same command.</div>
+<div class="l add">+- `make reinstall` — rebuilds, then force-reinstalls the built wheel into the</div>
+<div class="l add">+  virtual environment. One command to check a change to the package.</div>
+<div class="l add">+- `make run` — runs the program against `config.txt`.</div>
+<div class="l add">+- `make debug` — runs the program under `pdb`.</div>
+<div class="l add">+- `make clean` — removes `__pycache__` directories, `.pytest_cache` and `.pyc`</div>
+<div class="l add">+  files. It deliberately leaves the built distribution alone, because that</div>
+<div class="l add">+  artifact is a required deliverable.</div>
+<div class="l add">+- `make lint` — runs `flake8` over the tree and `mypy` with the project&#x27;s</div>
+<div class="l add">+  required checks.</div>
+<div class="l add">+- `make lint-strict` — the same `flake8` run plus `mypy --strict`.</div>
+<div class="l add">+- `make uninstall` — runs `clean`, then deletes the virtual environment.</div>
+<div class="l add">+</div>
+<div class="l add">+## Configuration file format</div>
+<div class="l add">+</div>
+<div class="l add">+The program reads a plain-text configuration file — `config.txt` by default.</div>
+<div class="l add">+This is the file shipped with the project:</div>
+<div class="l add">+</div>
+<div class="l add">+```ini</div>
+<div class="l add">+WIDTH=20</div>
+<div class="l add">+HEIGHT=15</div>
+<div class="l add">+ENTRY=0,0</div>
+<div class="l add">+EXIT=19,14</div>
+<div class="l add">+OUTPUT_FILE=maze.txt</div>
+<div class="l add">+PERFECT=False</div>
+<div class="l add">+SEED=42</div>
+<div class="l add">+```</div>
+<div class="l add">+</div>
+<div class="l add">+### Syntax</div>
+<div class="l add">+</div>
+<div class="l add">+- One `KEY=VALUE` pair per line.</div>
+<div class="l add">+- Blank lines are ignored.</div>
+<div class="l add">+- A line whose first non-blank character is `#` is a comment and is ignored.</div>
+<div class="l add">+  Comments are whole-line only — a `#` anywhere else is part of the value.</div>
+<div class="l add">+- Whitespace around the key and around the value is stripped.</div>
+<div class="l add">+- Key names are case-insensitive; they are upper-cased before use.</div>
+<div class="l add">+- The line is split at the *first* `=`, so any further `=` characters stay in</div>
+<div class="l add">+  the value.</div>
+<div class="l add">+- A key repeated in the same file is an error.</div>
+<div class="l add">+- Keys the program does not know are kept as plain strings and otherwise</div>
+<div class="l add">+  ignored.</div>
+<div class="l add">+</div>
+<div class="l add">+### Mandatory keys</div>
+<div class="l add">+</div>
+<div class="l add">+| Key | Type | Meaning |</div>
+<div class="l add">+|---|---|---|</div>
+<div class="l add">+| `WIDTH` | integer, at least 2 | Number of cell columns. |</div>
+<div class="l add">+| `HEIGHT` | integer, at least 2 | Number of cell rows. |</div>
+<div class="l add">+| `ENTRY` | two integers, `x,y` | Start cell. `x` in `0..WIDTH-1`, `y` in `0..HEIGHT-1`. |</div>
+<div class="l add">+| `EXIT` | two integers, `x,y` | Goal cell, same ranges. Must differ from `ENTRY`. |</div>
+<div class="l add">+| `OUTPUT_FILE` | string | Path the generated maze is written to. Taken as given, not validated. |</div>
+<div class="l add">+| `PERFECT` | `True` or `False`, case-insensitive | `True` produces a perfect maze: no loops, exactly one route between any two connected cells. `False` produces a playable board: dead ends removed, loops added, and the four corners and the centre cell forced open and reachable. |</div>
+<div class="l add">+</div>
+<div class="l add">+All six must be present. `ENTRY` and `EXIT` are `x,y` — column first, row</div>
+<div class="l add">+second — counted from `0` at the top-left cell.</div>
+<div class="l add">+</div>
+<div class="l add">+### Optional keys</div>
+<div class="l add">+</div>
+<div class="l add">+| Key | Type | Default | Meaning |</div>
+<div class="l add">+|---|---|---|---|</div>
+<div class="l add">+| `SEED` | integer | none | Seeds the random generator, so the same seed with the same other values reproduces the same maze. Omit it and every run differs. |</div>
+<div class="l add">+</div>
+<div class="l add">+## Algorithms</div>
+<div class="l add">+</div>
+<div class="l add">+Two different algorithms are used, one to build the maze and one to solve it.</div>
+<div class="l add">+</div>
+<div class="l add">+- **Generation: depth-first search (recursive backtracker).** Starting from the</div>
+<div class="l add">+  top-left cell, the generator walks to a random unvisited neighbour two grid</div>
+<div class="l add">+  steps away, knocks down the wall between them, and recurses; when a cell has</div>
+<div class="l add">+  no unvisited neighbours left it backs up. Cells belonging to the &quot;42&quot; logo</div>
+<div class="l add">+  are excluded from the walk, so the logo survives intact. On its own this</div>
+<div class="l add">+  produces a perfect maze.</div>
+<div class="l add">+- **Solving: breadth-first search.** The solver explores the grid outward from</div>
+<div class="l add">+  the entry in order of distance, so the first time it reaches the exit it has</div>
+<div class="l add">+  found a shortest route. It returns both the path and the cells visited on the</div>
+<div class="l add">+  way.</div>
+<div class="l add">+</div>
+<div class="l add">+With `PERFECT=False`, the depth-first result is then post-processed: dead ends</div>
+<div class="l add">+are opened up, loops are introduced, and the corners and the centre are forced</div>
+<div class="l add">+open and connected. Each candidate maze is rejected and regenerated if it</div>
+<div class="l add">+contains a 3x3 block of open floor or if the exit turns out to be unreachable;</div>
+<div class="l add">+after 1000 failed attempts the generator raises an error.</div>
+<div class="l add">+</div>
+<div class="l add">+### Why these algorithms</div>
+<div class="l add">+</div>
+<div class="l add">+&gt; **Placeholder — dganapat:** the choice of the generation algorithm is yours</div>
+<div class="l add">+&gt; to justify. Write here why depth-first backtracking was picked, which</div>
+<div class="l add">+&gt; alternatives were considered (Prim, Kruskal, Wilson, Eller, binary tree, …),</div>
+<div class="l add">+&gt; and what the trade-offs were — in your own words, so the answer holds up</div>
+<div class="l add">+&gt; under questioning. Do not ship this section unfilled.</div>
+<div class="l add">+</div>
+<div class="l add">+## What is reusable and how</div>
+<div class="l add">+</div>
+<div class="l add">+The maze generation is a self-contained Python package, `mazegen`, in the</div>
+<div class="l add">+`mazegen/` directory. It contains three modules and nothing else:</div>
+<div class="l add">+</div>
+<div class="l add">+- `mazegen/maze.py` — the `Maze` structure: dimensions, entry, exit and grid.</div>
+<div class="l add">+- `mazegen/generator.py` — `MazeGenerator`, the single generation class, plus</div>
+<div class="l add">+  the hexadecimal encoder and the path-to-direction converter.</div>
+<div class="l add">+- `mazegen/solver.py` — `bfs_solve_maze`, the shortest-path solver.</div>
+<div class="l add">+</div>
+<div class="l add">+`mazegen/__init__.py` re-exports the whole public surface, so one import is</div>
+<div class="l add">+enough:</div>
+<div class="l add">+</div>
+<div class="l add">+```python</div>
+<div class="l add">+from mazegen import (</div>
+<div class="l add">+    Maze,</div>
+<div class="l add">+    MazeGenerator,</div>
+<div class="l add">+    bfs_solve_maze,</div>
+<div class="l add">+    encode_maze_to_hex,</div>
+<div class="l add">+    path_to_direction,</div>
+<div class="l add">+)</div>
+<div class="l add">+```</div>
+<div class="l add">+</div>
+<div class="l add">+The package depends only on the standard library, and on nothing else in this</div>
+<div class="l add">+repository. Deliberately left outside it, because a consumer will have its own:</div>
+<div class="l add">+</div>
+<div class="l add">+- `mazegen_config.py` — this project&#x27;s configuration file parser.</div>
+<div class="l add">+- `mazegen_display.py` — the coloured terminal renderer.</div>
+<div class="l add">+- `a_maze_ing.py` — the main program and its interactive menu.</div>
+<div class="l add">+- `maze_analyzer.py` — the output file analyser.</div>
+<div class="l add">+</div>
+<div class="l add">+To reuse it, build the distribution and install the artifact:</div>
+<div class="l add">+</div>
+<div class="l add">+```bash</div>
+<div class="l add">+make build</div>
+<div class="l add">+pip install mazegen-1.0.0-py3-none-any.whl</div>
+<div class="l add">+```</div>
+<div class="l add">+</div>
+<div class="l add">+Installing adds exactly one name, `mazegen`, to the environment. The package&#x27;s</div>
+<div class="l add">+own documentation ships inside the distribution, and is repeated in full below.</div>
+<div class="l add">+</div>
+<div class="l add">+## Module documentation</div>
+<div class="l add">+</div>
+<div class="l add">+The following is the documentation that ships inside the `mazegen`</div>
+<div class="l add">+distribution, reproduced here in full.</div>
+<div class="l add">+</div>
+<div class="l add">+### mazegen</div>
+<div class="l add">+</div>
+<div class="l add">+A standalone maze generator: builds a rectangular maze, solves it, and encodes</div>
+<div class="l add">+it for output.</div>
+<div class="l add">+</div>
+<div class="l add">+**Requires Python 3.10 or newer. It needs nothing beyond the standard</div>
+<div class="l add">+library** — `mazegen` declares no dependencies, and installing it pulls nothing</div>
+<div class="l add">+else in.</div>
+<div class="l add">+</div>
+<div class="l add">+#### Install</div>
+<div class="l add">+</div>
+<div class="l add">+```sh</div>
+<div class="l add">+pip install mazegen-1.0.0-py3-none-any.whl</div>
+<div class="l add">+```</div>
+<div class="l add">+</div>
+<div class="l add">+#### Complete example</div>
+<div class="l add">+</div>
+<div class="l add">+```python</div>
+<div class="l add">+from mazegen import (</div>
+<div class="l add">+    MazeGenerator,</div>
+<div class="l add">+    bfs_solve_maze,</div>
+<div class="l add">+    encode_maze_to_hex,</div>
+<div class="l add">+    path_to_direction,</div>
+<div class="l add">+)</div>
+<div class="l add">+</div>
+<div class="l add">+generator = MazeGenerator(</div>
+<div class="l add">+    height=15,</div>
+<div class="l add">+    width=20,</div>
+<div class="l add">+    entry=(0, 0),</div>
+<div class="l add">+    exit=(19, 14),</div>
+<div class="l add">+    perfect=False,</div>
+<div class="l add">+    seed=42,</div>
+<div class="l add">+)</div>
+<div class="l add">+</div>
+<div class="l add">+maze = generator.create_maze()</div>
+<div class="l add">+</div>
+<div class="l add">+# The maze structure: a grid of (2 * height + 1) x (2 * width + 1) integers.</div>
+<div class="l add">+print(&quot;cells:&quot;, maze.width, &quot;x&quot;, maze.height)</div>
+<div class="l add">+print(&quot;grid: &quot;, maze.grid_width, &quot;x&quot;, maze.grid_height)</div>
+<div class="l add">+print(&quot;cell (0, 0) is open:&quot;, maze.grid[1][1] == 0)</div>
+<div class="l add">+print(&quot;top-left corner is a wall:&quot;, maze.grid[0][0] == 1)</div>
+<div class="l add">+</div>
+<div class="l add">+# The solution: shortest path (BFS), as a list of (x, y) cell coordinates.</div>
+<div class="l add">+path, explored = bfs_solve_maze(maze)</div>
+<div class="l add">+print(&quot;path length:&quot;, len(path), &quot;cells&quot;)</div>
+<div class="l add">+print(&quot;first three steps:&quot;, path[:3])</div>
+<div class="l add">+print(&quot;directions:&quot;, path_to_direction(path))</div>
+<div class="l add">+print(&quot;cells visited while searching:&quot;, len(explored))</div>
+<div class="l add">+</div>
+<div class="l add">+# create_maze() already solved it: the same values are cached on the generator.</div>
+<div class="l add">+print(&quot;cached path matches:&quot;, generator.path == path)</div>
+<div class="l add">+</div>
+<div class="l add">+# The hexadecimal encoding is a separate, file-facing representation.</div>
+<div class="l add">+print(&quot;first hex row:&quot;, encode_maze_to_hex(maze)[0])</div>
+<div class="l add">+```</div>
+<div class="l add">+</div>
+<div class="l add">+Output:</div>
+<div class="l ctx"> </div>
+<div class="l del">-    ```bash</div>
+<div class="l del">-    git clone &lt;REPO LINK&gt;</div>
+<div class="l del">-    cd A-maze-ing</div>
+<div class="l del">-    ```</div>
+<div class="l add">+```</div>
+<div class="l add">+cells: 20 x 15</div>
+<div class="l add">+grid:  41 x 31</div>
+<div class="l add">+cell (0, 0) is open: True</div>
+<div class="l add">+top-left corner is a wall: True</div>
+<div class="l add">+path length: 75 cells</div>
+<div class="l add">+first three steps: [(0, 0), (0, 1), (0, 1)]</div>
+<div class="l add">+directions: SSSEEESESEESESSSSSESSESENESEENESEEEEE</div>
+<div class="l add">+cells visited while searching: 540</div>
+<div class="l add">+cached path matches: True</div>
+<div class="l add">+first hex row: 93913913951391155393</div>
+<div class="l add">+```</div>
+<div class="l ctx"> </div>
+<div class="l del">-2. Run the program:</div>
+<div class="l add">+#### Constructor parameters</div>
+<div class="l ctx"> </div>
+<div class="l del">-    ```bash</div>
+<div class="l del">-    make run</div>
+<div class="l del">-    ```</div>
+<div class="l add">+`MazeGenerator(height, width, entry, exit, perfect, seed=None)`</div>
+<div class="l add">+</div>
+<div class="l add">+| Parameter | Type | Default | Meaning |</div>
+<div class="l add">+|---|---|---|---|</div>
+<div class="l add">+| `height` | `int` | *required* | Number of cell rows. |</div>
+<div class="l add">+| `width` | `int` | *required* | Number of cell columns. |</div>
+<div class="l add">+| `entry` | `tuple[int, int]` | *required* | Start cell as `(x, y)`: `x` in `0..width-1`, `y` in `0..height-1`. |</div>
+<div class="l add">+| `exit` | `tuple[int, int]` | *required* | Goal cell as `(x, y)`, same ranges as `entry`. |</div>
+<div class="l add">+| `perfect` | `bool` | *required* | `True` leaves the maze perfect: no loops, so any two connected cells have exactly one route between them. `False` removes dead ends, adds loops, and forces the four corners and the centre cell open and reachable. |</div>
+<div class="l add">+| `seed` | `int \| None` | `None` | Seeds the generator for reproducible mazes. The same seed with the same other arguments gives the same maze. `None` leaves the random module unseeded, so every run differs. |</div>
+<div class="l add">+</div>
+<div class="l add">+Only `seed` has a default; the other five are required. Note that a seed is</div>
+<div class="l add">+applied with `random.seed()`, which seeds the standard library&#x27;s global random</div>
+<div class="l add">+state, not a private one.</div>
+<div class="l add">+</div>
+<div class="l add">+`create_maze()` returns the `Maze` and raises `ValueError` if it cannot produce</div>
+<div class="l add">+a valid maze within 1000 attempts.</div>
+<div class="l add">+</div>
+<div class="l add">+#### Reaching the maze structure</div>
+<div class="l add">+</div>
+<div class="l add">+`create_maze()` returns the `Maze`, and also stores it on the generator as</div>
+<div class="l add">+`generator.maze` (`None` before the first call).</div>
+<div class="l add">+</div>
+<div class="l add">+A `Maze` carries:</div>
+<div class="l add">+</div>
+<div class="l add">+| Attribute | Meaning |</div>
+<div class="l add">+|---|---|</div>
+<div class="l add">+| `height`, `width` | Cell dimensions, as passed to the constructor. |</div>
+<div class="l add">+| `entry`, `exit` | Cell coordinates, as passed to the constructor. |</div>
+<div class="l add">+| `grid_height`, `grid_width` | `2 * height + 1` and `2 * width + 1`. |</div>
+<div class="l add">+| `grid` | The maze itself: `list[list[int]]`, indexed `grid[row][column]` — that is, `grid[y][x]`. |</div>
+<div class="l add">+</div>
+<div class="l add">+The grid is a wall-and-cell layout: rows and columns alternate between cells</div>
+<div class="l add">+and the walls separating them. Odd coordinates are cells, even coordinates are</div>
+<div class="l add">+walls, and the outermost ring is always solid border. Cell `(x, y)` sits at</div>
+<div class="l add">+`grid[2 * y + 1][2 * x + 1]`, and the wall between two horizontally adjacent</div>
+<div class="l add">+cells sits at the even column between them.</div>
+<div class="l add">+</div>
+<div class="l add">+Each grid entry holds one of three values:</div>
+<div class="l add">+</div>
+<div class="l add">+| Value | Meaning |</div>
+<div class="l add">+|---|---|</div>
+<div class="l add">+| `0` | Open — a corridor you can walk through. |</div>
+<div class="l add">+| `1` | Wall. |</div>
+<div class="l add">+| `2` | Wall belonging to the &quot;42&quot; logo stamped into the centre. Solid like `1`; the separate value only marks it as permanent so generation never carves through it. |</div>
+<div class="l add">+</div>
+<div class="l add">+##### The grid is not the hexadecimal encoding</div>
+<div class="l add">+</div>
+<div class="l add">+`encode_maze_to_hex(maze)` returns a *different* representation: one string per</div>
+<div class="l add">+cell row, one hexadecimal digit per cell, `height` strings of `width`</div>
+<div class="l add">+characters. Each digit is a bitmask of that cell&#x27;s four walls — north `1`,</div>
+<div class="l add">+east `2`, south `4`, west `8` — so `f` is a fully walled cell and `0` a fully</div>
+<div class="l add">+open one.</div>
+<div class="l add">+</div>
+<div class="l add">+That encoding is what the output file contains. It is derived from `maze.grid`</div>
+<div class="l add">+but is not the same thing, and neither has the other&#x27;s dimensions: the grid is</div>
+<div class="l add">+`(2 * height + 1) x (2 * width + 1)` integers with walls as their own entries,</div>
+<div class="l add">+while the hex form is `height x width` digits with walls folded into each</div>
+<div class="l add">+cell&#x27;s bits. Read `maze.grid` to inspect a maze in memory; read the hex rows to</div>
+<div class="l add">+understand a written file.</div>
+<div class="l add">+</div>
+<div class="l add">+#### Reaching a solution</div>
+<div class="l add">+</div>
+<div class="l add">+`bfs_solve_maze(maze)` returns `(path, explored)`. `create_maze()` already</div>
+<div class="l add">+calls it, so the same two lists are available as `generator.path` and</div>
+<div class="l add">+`generator.explored` without solving again.</div>
+<div class="l add">+</div>
+<div class="l add">+`path` is **the shortest path** from `entry` to `exit`: the solver is a</div>
+<div class="l add">+breadth-first search, which visits cells in order of distance from the entry,</div>
+<div class="l add">+so the first route it reaches the exit by is a minimal one. It is empty if the</div>
+<div class="l add">+exit is unreachable. `explored` is every cell BFS visited on the way, in visit</div>
+<div class="l add">+order — useful for animating or debugging the search, not part of the answer.</div>
+<div class="l add">+</div>
+<div class="l add">+Both lists are `(x, y)` cell coordinates. They are converted down from the</div>
+<div class="l add">+grid, which includes the wall positions the search stepped through, so</div>
+<div class="l add">+consecutive entries repeat: a 38-cell route comes back as 75 entries.</div>
+<div class="l add">+`path_to_direction(path)` collapses that into the move string —</div>
+<div class="l add">+`&quot;SSSEEESES...&quot;` using `N`, `E`, `S`, `W` — which is what the repeated entries</div>
+<div class="l add">+are there for.</div>
+<div class="l add">+</div>
+<div class="l add">+#### Public API</div>
+<div class="l add">+</div>
+<div class="l add">+Everything below is importable directly from `mazegen`:</div>
+<div class="l add">+</div>
+<div class="l add">+- `MazeGenerator` — the generator class.</div>
+<div class="l add">+- `Maze` — the maze structure it produces.</div>
+<div class="l add">+- `bfs_solve_maze(maze)` — shortest path plus explored cells.</div>
+<div class="l add">+- `encode_maze_to_hex(maze)` — hexadecimal wall encoding, one string per row.</div>
+<div class="l add">+- `path_to_direction(path)` — path as a string of `N`/`E`/`S`/`W` moves.</div>
+<div class="l add">+</div>
+<div class="l add">+## Output analyser</div>
+<div class="l add">+</div>
+<div class="l add">+`maze_analyzer.py` is our own verification tool. It reads a maze *output file*</div>
+<div class="l add">+— not the source code — and re-derives everything about it from scratch, so it</div>
+<div class="l add">+checks the written result rather than trusting the generator.</div>
+<div class="l add">+</div>
+<div class="l add">+What it checks:</div>
+<div class="l add">+</div>
+<div class="l add">+- **Wall coherence.** Every shared wall must be encoded the same way by both</div>
+<div class="l add">+  cells that touch it. A mismatch means the file is invalid, and the analyser</div>
+<div class="l add">+  says so before checking anything else.</div>
+<div class="l add">+- **Connectivity.** Which cells are reachable from the entry in the footer, and</div>
+<div class="l add">+  whether any open corridor is unreachable. Only the isolated &quot;42&quot; logo cells</div>
+<div class="l add">+  may sit outside the reachable region.</div>
+<div class="l add">+- **Whether the exit is reachable.**</div>
+<div class="l add">+- **Perfect versus playable.** The number of independent loops in the reachable</div>
+<div class="l add">+  region: zero loops means a perfect maze (`PERFECT=True`), and more than one</div>
+<div class="l add">+  means a multi-route board.</div>
+<div class="l add">+- **Dead ends**, split into real ones and ones merely enclosed by the &quot;42&quot;</div>
+<div class="l add">+  pattern, which are tolerated.</div>
+<div class="l add">+- **The four corners and the centre cell**, which a Pac-Man-style board needs as</div>
+<div class="l add">+  open corridors.</div>
+<div class="l add">+</div>
+<div class="l add">+It prints a measurement block and a one-line verdict. A malformed file produces</div>
+<div class="l add">+a clear message and exit code `2` instead of a traceback; a file it could read</div>
+<div class="l add">+gives exit code `0`.</div>
+<div class="l add">+</div>
+<div class="l add">+How to run it:</div>
+<div class="l add">+</div>
+<div class="l add">+```bash</div>
+<div class="l add">+venv/bin/python3 maze_analyzer.py maze.txt</div>
+<div class="l add">+```</div>
+<div class="l add">+</div>
+<div class="l add">+Two thresholds drive the playable verdict:</div>
+<div class="l add">+</div>
+<div class="l add">+- `--min-loops N` — independent routes a playable maze must keep. Default `2`.</div>
+<div class="l add">+- `--max-dead-ends N` — real dead ends tolerated. Default `2`; use `0` to check</div>
+<div class="l add">+  the no-dead-end bonus.</div>
+<div class="l add">+</div>
+<div class="l add">+```bash</div>
+<div class="l add">+venv/bin/python3 maze_analyzer.py maze.txt --min-loops 3 --max-dead-ends 0</div>
+<div class="l add">+```</div>
+<div class="l add">+</div>
+<div class="l add">+## Error handling</div>
+<div class="l add">+</div>
+<div class="l add">+- **Missing config file.** The parser raises `FileNotFoundError` before any</div>
+<div class="l add">+  generation starts.</div>
+<div class="l add">+- **Malformed config line.** A line with no `=`, a duplicate key, coordinates</div>
+<div class="l add">+  that are not two integers, a non-integer `SEED`, `WIDTH` or `HEIGHT`, a</div>
+<div class="l add">+  `WIDTH` or `HEIGHT` below 2, or a `PERFECT` value that is neither `True` nor</div>
+<div class="l add">+  `False` is reported with its line number.</div>
+<div class="l add">+- **Invalid config values.** A missing mandatory key, an `ENTRY` or `EXIT`</div>
+<div class="l add">+  outside the maze, or an `ENTRY` identical to the `EXIT` is rejected after</div>
+<div class="l add">+  parsing with a message naming the offending key.</div>
+<div class="l add">+- Both kinds are caught by the main program, printed to standard error as</div>
+<div class="l add">+  `Configuration Error: ...`, and the program exits with status `1`.</div>
+<div class="l add">+- **Generation failure.** The generator retries up to 1000 times and then</div>
+<div class="l add">+  raises `ValueError`, which the main program reports as</div>
+<div class="l add">+  `Maze Generation Error: ...` and exits with status `1`.</div>
+<div class="l add">+- **Output file write failure.** An `IOError` while writing is caught and</div>
+<div class="l add">+  reported on standard error; the program keeps running so the maze is still</div>
+<div class="l add">+  displayed.</div>
+<div class="l add">+- **Interruption.** `Ctrl-C` and end-of-input in the interactive menu exit</div>
+<div class="l add">+  cleanly.</div>
+<div class="l add">+- **Unexpected errors in the menu** are caught and printed without ending the</div>
+<div class="l add">+  session.</div>
+<div class="l add">+- **The analyser** never raises at the user: a missing or malformed file gives</div>
+<div class="l add">+  a plain message and exit code `2`.</div>
+<div class="l add">+</div>
+<div class="l add">+## The team</div>
+<div class="l add">+</div>
+<div class="l add">+### Roles</div>
+<div class="l add">+</div>
+<div class="l add">+**dganapat**</div>
+<div class="l add">+</div>
+<div class="l add">+- Maze generation algorithm</div>
+<div class="l add">+- Pathfinding</div>
+<div class="l add">+- User interaction</div>
+<div class="l add">+- Docstrings</div>
+<div class="l add">+</div>
+<div class="l add">+**si-wong**</div>
+<div class="l add">+</div>
+<div class="l add">+- Maze generation</div>
+<div class="l add">+- Configuring the maze data</div>
+<div class="l add">+- Makefile</div>
+<div class="l add">+- Documentation</div>
+<div class="l add">+</div>
+<div class="l add">+### Planning, and how it evolved</div>
+<div class="l add">+</div>
+<div class="l add">+We researched the topic before writing anything. We were initially unsure how</div>
+<div class="l add">+to divide the work, and settled on splitting it by component, because the</div>
+<div class="l add">+components turned out to be loosely coupled and could be worked on in parallel.</div>
+<div class="l add">+Cleanup and documentation were done jointly at the end.</div>
+<div class="l add">+</div>
+<div class="l add">+### Retrospective</div>
+<div class="l add">+</div>
+<div class="l add">+**What worked**</div>
+<div class="l add">+</div>
+<div class="l add">+- The split by component. Once the boundaries were clear, the two of us could</div>
+<div class="l add">+  work at the same time without blocking each other.</div>
+<div class="l add">+- Building the Makefile early. The compile-and-rerun loop became one command,</div>
+<div class="l add">+  which we used constantly.</div>
+<div class="l add">+</div>
+<div class="l add">+**What could be improved**</div>
+<div class="l add">+</div>
+<div class="l add">+- We exchanged files directly instead of using version control. That cost us</div>
+<div class="l add">+  time and left no history of how the project evolved. We should learn a proper</div>
+<div class="l add">+  git workflow.</div>
+<div class="l add">+- We wrote no unit tests. We verified the output with our own analyser instead,</div>
+<div class="l add">+  which caught real problems, but a test suite would have caught regressions</div>
+<div class="l add">+  earlier.</div>
+<div class="l add">+</div>
+<div class="l add">+### Tools used</div>
+<div class="l add">+</div>
+<div class="l add">+- `flake8` — style checking</div>
+<div class="l add">+- `mypy` — static type checking</div>
+<div class="l add">+- `make` — build and run targets</div>
+<div class="l add">+- Python virtual environments</div>
+<div class="l add">+- `git` — version control</div>
+<div class="l add">+- VS Code — editor</div>
+<div class="l add">+- Our own output analyser, `maze_analyzer.py`</div>
+<div class="l add">+- AI</div>
+<div class="l ctx"> </div>
+<div class="l ctx"> ## Resources</div>
+<div class="l ctx"> </div>
+<div class="l add">+### References</div>
+<div class="l add">+</div>
+<div class="l add">+&gt; **Placeholder — dganapat:** list here the classic references on maze</div>
+<div class="l add">+&gt; generation and pathfinding that we actually read, with what each one gave us.</div>
+<div class="l add">+&gt; Only sources you can discuss — an unread reference in this list is worse than</div>
+<div class="l add">+&gt; an empty section. Do not ship this section unfilled.</div>
+<div class="l add">+</div>
+<div class="l ctx"> ### AI usage</div>
+<div class="l ctx"> </div>
+<div class="l del">-    - explaining maze generation algorithms</div>
+<div class="l del">-    - discussing software architecture</div>
+<div class="l del">-    - reviewing Python code</div>
+<div class="l del">-    - improving documentation</div>
+<div class="l del">-    - generating README structure</div>
+<div class="l del">-    - suggesting refactoring ideas</div>
+<div class="l add">+AI was used for:</div>
+<div class="l ctx"> </div>
+<div class="l add">+- explaining maze generation algorithms</div>
+<div class="l add">+- discussing software architecture</div>
+<div class="l add">+- reviewing Python code</div>
+<div class="l add">+- improving documentation</div>
+<div class="l add">+- generating README structure</div>
+<div class="l add">+- suggesting refactoring ideas</div></div></section>
+<h2 id="code">Package &amp; code</h2>
+<section id="mazegen-__init__-py"><h3><code>mazegen/__init__.py</code></h3><p class="note">New — public surface of the package</p><div class="diff"><div class="l meta">diff --git a/mazegen/__init__.py b/mazegen/__init__.py</div>
+<div class="l meta">new file mode 100644</div>
+<div class="l meta">index 0000000..8db7d5b</div>
+<div class="l meta">--- /dev/null</div>
+<div class="l meta">+++ b/mazegen/__init__.py</div>
+<div class="l hunk">@@ -0,0 +1,13 @@</div>
+<div class="l add">+&quot;&quot;&quot;Maze generation package: maze structure, generator, and solver.&quot;&quot;&quot;</div>
+<div class="l add">+</div>
+<div class="l add">+from .generator import MazeGenerator, encode_maze_to_hex, path_to_direction</div>
+<div class="l add">+from .maze import Maze</div>
+<div class="l add">+from .solver import bfs_solve_maze</div>
+<div class="l add">+</div>
+<div class="l add">+__all__ = [</div>
+<div class="l add">+    &quot;Maze&quot;,</div>
+<div class="l add">+    &quot;MazeGenerator&quot;,</div>
+<div class="l add">+    &quot;bfs_solve_maze&quot;,</div>
+<div class="l add">+    &quot;encode_maze_to_hex&quot;,</div>
+<div class="l add">+    &quot;path_to_direction&quot;,</div>
+<div class="l add">+]</div></div></section>
+<section id="mazegen-maze-py"><h3><code>mazegen/maze.py</code></h3><p class="note">Moved from mazegen_maze.py</p><div class="diff"><div class="l meta">diff --git a/mazegen/maze.py b/mazegen/maze.py</div>
+<div class="l meta">new file mode 100644</div>
+<div class="l meta">index 0000000..45800e0</div>
+<div class="l meta">--- /dev/null</div>
+<div class="l meta">+++ b/mazegen/maze.py</div>
+<div class="l hunk">@@ -0,0 +1,23 @@</div>
+<div class="l add">+from dataclasses import dataclass</div>
+<div class="l add">+</div>
+<div class="l add">+</div>
+<div class="l add">+@dataclass</div>
+<div class="l add">+class Maze:</div>
+<div class="l add">+    def __init__(self,</div>
+<div class="l add">+                 height: int,</div>
+<div class="l add">+                 width: int,</div>
+<div class="l add">+                 entry: tuple[int, int],</div>
+<div class="l add">+                 exit: tuple[int, int]) -&gt; None:</div>
+<div class="l add">+        self.height = height</div>
+<div class="l add">+        self.width = width</div>
+<div class="l add">+        self.entry = entry</div>
+<div class="l add">+        self.exit = exit</div>
+<div class="l add">+</div>
+<div class="l add">+        self.grid_height = 2 * height + 1</div>
+<div class="l add">+        self.grid_width = 2 * width + 1</div>
+<div class="l add">+</div>
+<div class="l add">+        # Initialize grid with walls (1)</div>
+<div class="l add">+        self.grid: list[list[int]] = [</div>
+<div class="l add">+            [1 for _ in range(self.grid_width)]</div>
+<div class="l add">+            for _ in range(self.grid_height)</div>
+<div class="l add">+        ]</div></div></section>
+<section id="mazegen-generator-py"><h3><code>mazegen/generator.py</code></h3><p class="note">Moved from mazegen_generator.py</p><div class="diff"><div class="l meta">diff --git a/mazegen/generator.py b/mazegen/generator.py</div>
+<div class="l meta">new file mode 100644</div>
+<div class="l meta">index 0000000..0695077</div>
+<div class="l meta">--- /dev/null</div>
+<div class="l meta">+++ b/mazegen/generator.py</div>
+<div class="l hunk">@@ -0,0 +1,330 @@</div>
+<div class="l add">+import random</div>
+<div class="l add">+from .maze import Maze</div>
+<div class="l add">+from .solver import bfs_solve_maze</div>
+<div class="l add">+import sys</div>
+<div class="l add">+</div>
+<div class="l add">+</div>
+<div class="l add">+def add_42_logo(maze: Maze) -&gt; list[tuple[int, int]]:</div>
+<div class="l add">+    &quot;&quot;&quot;Stamps the &#x27;42&#x27; wall logo into the center of the maze grid.&quot;&quot;&quot;</div>
+<div class="l add">+    pattern = [</div>
+<div class="l add">+        [1, 0, 1, 0, 1, 1, 1],</div>
+<div class="l add">+        [1, 0, 1, 0, 0, 0, 1],</div>
+<div class="l add">+        [1, 1, 1, 0, 1, 1, 1],</div>
+<div class="l add">+        [0, 0, 1, 0, 1, 0, 0],</div>
+<div class="l add">+        [0, 0, 1, 0, 1, 1, 1],</div>
+<div class="l add">+    ]</div>
+<div class="l add">+    pat_w = len(pattern[0])</div>
+<div class="l add">+    pat_h = len(pattern)</div>
+<div class="l add">+</div>
+<div class="l add">+    grid = maze.grid</div>
+<div class="l add">+    grid_h = maze.grid_height</div>
+<div class="l add">+    grid_w = maze.grid_width</div>
+<div class="l add">+</div>
+<div class="l add">+    if grid_w &lt; (pat_w + 4) or grid_h &lt; (pat_h + 4):</div>
+<div class="l add">+        print(</div>
+<div class="l add">+            f&quot;Warning: Maze dimensions ({maze.width}x{maze.height}) &quot;</div>
+<div class="l add">+            &quot;are too small to fit the &#x27;42&#x27; pattern.&quot;,</div>
+<div class="l add">+            file=sys.stderr</div>
+<div class="l add">+        )</div>
+<div class="l add">+        return []</div>
+<div class="l add">+</div>
+<div class="l add">+    start_y = (grid_h // 2) - (pat_h // 2)</div>
+<div class="l add">+    start_x = (grid_w // 2) - (pat_w // 2)</div>
+<div class="l add">+</div>
+<div class="l add">+    # Cell centers only ever sit on odd (row, col) grid coordinates. The</div>
+<div class="l add">+    # pattern&#x27;s own middle row/column must land on one of those, or the</div>
+<div class="l add">+    # &quot;42&quot; glyph&#x27;s built-in gap won&#x27;t coincide with a real cell -- it&#x27;ll</div>
+<div class="l add">+    # coincide with a wall instead, and the Pac-Man centre requirement</div>
+<div class="l add">+    # becomes geometrically impossible to satisfy without punching a</div>
+<div class="l add">+    # hole in the logo. Nudge the placement by one row/col when needed.</div>
+<div class="l add">+    if (start_y + pat_h // 2) % 2 == 0:</div>
+<div class="l add">+        start_y += 1</div>
+<div class="l add">+    if (start_x + pat_w // 2) % 2 == 0:</div>
+<div class="l add">+        start_x += 1</div>
+<div class="l add">+</div>
+<div class="l add">+    logo_pos = []</div>
+<div class="l add">+    for y in range(pat_h):</div>
+<div class="l add">+        for x in range(pat_w):</div>
+<div class="l add">+            if pattern[y][x] == 1:</div>
+<div class="l add">+                gy = start_y + y</div>
+<div class="l add">+                gx = start_x + x</div>
+<div class="l add">+                grid[gy][gx] = 2  # Mark as permanent logo wall</div>
+<div class="l add">+                logo_pos.append((gy, gx))</div>
+<div class="l add">+    return logo_pos</div>
+<div class="l add">+</div>
+<div class="l add">+</div>
+<div class="l add">+def dfs_generator(maze: Maze, logo_pos: list[tuple[int, int]]) -&gt; None:</div>
+<div class="l add">+    &quot;&quot;&quot;Generates maze corridors using DFS, avoiding logo wall positions.&quot;&quot;&quot;</div>
+<div class="l add">+    grid = maze.grid</div>
+<div class="l add">+    height = maze.grid_height</div>
+<div class="l add">+    width = maze.grid_width</div>
+<div class="l add">+    directions = [(0, -1), (0, 1), (-1, 0), (1, 0)]</div>
+<div class="l add">+</div>
+<div class="l add">+    def dfs(x: int, y: int) -&gt; None:</div>
+<div class="l add">+        grid[y][x] = 0</div>
+<div class="l add">+        for dx, dy in random.sample(directions, len(directions)):</div>
+<div class="l add">+            nx, ny = (x + dx * 2), (y + dy * 2)</div>
+<div class="l add">+            wall_x, wall_y = x + dx, y + dy</div>
+<div class="l add">+</div>
+<div class="l add">+            if (0 &lt; nx &lt; width - 1) and (0 &lt; ny &lt; height - 1):</div>
+<div class="l add">+                if (</div>
+<div class="l add">+                    grid[ny][nx] == 1</div>
+<div class="l add">+                    and (ny, nx) not in logo_pos</div>
+<div class="l add">+                    and (wall_y, wall_x) not in logo_pos</div>
+<div class="l add">+                ):</div>
+<div class="l add">+                    grid[wall_y][wall_x] = 0</div>
+<div class="l add">+                    dfs(nx, ny)</div>
+<div class="l add">+</div>
+<div class="l add">+    dfs(1, 1)</div>
+<div class="l add">+</div>
+<div class="l add">+</div>
+<div class="l add">+def apply_entry_exit(maze: Maze) -&gt; None:</div>
+<div class="l add">+    &quot;&quot;&quot;Marks entry and exit interior cells as open corridors without</div>
+<div class="l add">+    breaking outer border walls.&quot;&quot;&quot;</div>
+<div class="l add">+    grid = maze.grid</div>
+<div class="l add">+    x1, y1 = maze.entry</div>
+<div class="l add">+    x2, y2 = maze.exit</div>
+<div class="l add">+</div>
+<div class="l add">+    # Convert cell coordinates to grid pathway coordinates</div>
+<div class="l add">+    entry_x, entry_y = (x1 * 2 + 1), (y1 * 2 + 1)</div>
+<div class="l add">+    exit_x, exit_y = (x2 * 2 + 1), (y2 * 2 + 1)</div>
+<div class="l add">+</div>
+<div class="l add">+    # Ensure interior entry/exit cells are open corridors</div>
+<div class="l add">+    grid[entry_y][entry_x] = 0</div>
+<div class="l add">+    grid[exit_y][exit_x] = 0</div>
+<div class="l add">+</div>
+<div class="l add">+    # Ensure perimeter border walls around the entire grid remain</div>
+<div class="l add">+    # completely intact (1)</div>
+<div class="l add">+    # North &amp; South outer borders</div>
+<div class="l add">+    for x in range(maze.grid_width):</div>
+<div class="l add">+        grid[0][x] = 1</div>
+<div class="l add">+        grid[maze.grid_height - 1][x] = 1</div>
+<div class="l add">+</div>
+<div class="l add">+    # West &amp; East outer borders</div>
+<div class="l add">+    for y in range(maze.grid_height):</div>
+<div class="l add">+        grid[y][0] = 1</div>
+<div class="l add">+        grid[y][maze.grid_width - 1] = 1</div>
+<div class="l add">+</div>
+<div class="l add">+</div>
+<div class="l add">+def check_open_areas(maze: Maze) -&gt; bool:</div>
+<div class="l add">+    &quot;&quot;&quot;Ensures no 3x3 open floor area exists anywhere in the grid.&quot;&quot;&quot;</div>
+<div class="l add">+    grid = maze.grid</div>
+<div class="l add">+    for y in range(0, maze.grid_height - 2):</div>
+<div class="l add">+        for x in range(0, maze.grid_width - 2):</div>
+<div class="l add">+            if all(</div>
+<div class="l add">+                grid[y + dy][x + dx] == 0 for dy in range(3) for dx in range(3)</div>
+<div class="l add">+            ):</div>
+<div class="l add">+                return False</div>
+<div class="l add">+    return True</div>
+<div class="l add">+</div>
+<div class="l add">+</div>
+<div class="l add">+def apply_pacman_corners_and_center(</div>
+<div class="l add">+    maze: Maze,</div>
+<div class="l add">+    logo_pos: list[tuple[int, int]],</div>
+<div class="l add">+) -&gt; None:</div>
+<div class="l add">+    &quot;&quot;&quot;Ensures four outer corners and center cell are open AND reachable.</div>
+<div class="l add">+</div>
+<div class="l add">+    Just setting the cell to 0 isn&#x27;t enough -- if every wall around it is</div>
+<div class="l add">+    still closed it becomes an isolated one-cell room, which the analyzer</div>
+<div class="l add">+    (correctly) reports as an unreachable corridor. So we also carve a</div>
+<div class="l add">+    passage to a neighboring cell if one doesn&#x27;t already exist.</div>
+<div class="l add">+    &quot;&quot;&quot;</div>
+<div class="l add">+    grid = maze.grid</div>
+<div class="l add">+    h = maze.grid_height</div>
+<div class="l add">+    w = maze.grid_width</div>
+<div class="l add">+</div>
+<div class="l add">+    def ensure_open_and_connected(cx: int, cy: int) -&gt; None:</div>
+<div class="l add">+        grid[cy][cx] = 0</div>
+<div class="l add">+</div>
+<div class="l add">+        # Already connected to an open neighbor? nothing more to do.</div>
+<div class="l add">+        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:</div>
+<div class="l add">+            nx, ny = cx + dx * 2, cy + dy * 2</div>
+<div class="l add">+            wx, wy = cx + dx, cy + dy</div>
+<div class="l add">+            if 0 &lt; nx &lt; w - 1 and 0 &lt; ny &lt; h - 1 and grid[wy][wx] == 0:</div>
+<div class="l add">+                return</div>
+<div class="l add">+</div>
+<div class="l add">+        # Otherwise carve one passage toward the nearest non-logo neighbor.</div>
+<div class="l add">+        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:</div>
+<div class="l add">+            nx, ny = cx + dx * 2, cy + dy * 2</div>
+<div class="l add">+            wx, wy = cx + dx, cy + dy</div>
+<div class="l add">+            if (</div>
+<div class="l add">+                0 &lt; nx &lt; w - 1 and 0 &lt; ny &lt; h - 1</div>
+<div class="l add">+                and (wy, wx) not in logo_pos</div>
+<div class="l add">+                and (ny, nx) not in logo_pos</div>
+<div class="l add">+            ):</div>
+<div class="l add">+                grid[wy][wx] = 0</div>
+<div class="l add">+                grid[ny][nx] = 0</div>
+<div class="l add">+                return</div>
+<div class="l add">+</div>
+<div class="l add">+    # Four corner cells on outer perimeter pathways</div>
+<div class="l add">+    corners = [(1, 1), (w - 2, 1), (1, h - 2), (w - 2, h - 2)]</div>
+<div class="l add">+    for cx, cy in corners:</div>
+<div class="l add">+        ensure_open_and_connected(cx, cy)</div>
+<div class="l add">+</div>
+<div class="l add">+    # Center cell</div>
+<div class="l add">+    cy, cx = (h // 2) | 1, (w // 2) | 1</div>
+<div class="l add">+    ensure_open_and_connected(cx, cy)</div>
+<div class="l add">+</div>
+<div class="l add">+</div>
+<div class="l add">+def remove_dead_ends_and_add_loops(</div>
+<div class="l add">+    maze: Maze,</div>
+<div class="l add">+    logo_pos: list[tuple[int, int]],</div>
+<div class="l add">+) -&gt; None:</div>
+<div class="l add">+    &quot;&quot;&quot;Removes dead-ends and ensures multiple loops exist in non-perfect</div>
+<div class="l add">+    mode.&quot;&quot;&quot;</div>
+<div class="l add">+    grid = maze.grid</div>
+<div class="l add">+    height = maze.grid_height</div>
+<div class="l add">+    width = maze.grid_width</div>
+<div class="l add">+</div>
+<div class="l add">+    # 1. Repeatedly eliminate dead-ends by knocking down adjacent</div>
+<div class="l add">+    #    internal walls</div>
+<div class="l add">+    changed = True</div>
+<div class="l add">+    while changed:</div>
+<div class="l add">+        changed = False</div>
+<div class="l add">+        for y in range(1, height - 1, 2):</div>
+<div class="l add">+            for x in range(1, width - 1, 2):</div>
+<div class="l add">+                # Count open neighbors</div>
+<div class="l add">+                open_neighbors = []</div>
+<div class="l add">+                for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:</div>
+<div class="l add">+                    nx, ny = x + dx * 2, y + dy * 2</div>
+<div class="l add">+                    wx, wy = x + dx, y + dy</div>
+<div class="l add">+                    if 0 &lt; nx &lt; width - 1 and 0 &lt; ny &lt; height - 1:</div>
+<div class="l add">+                        if grid[wy][wx] == 0:</div>
+<div class="l add">+                            open_neighbors.append((wx, wy))</div>
+<div class="l add">+</div>
+<div class="l add">+                # If cell is a dead end (only 1 open connection),</div>
+<div class="l add">+                # break an extra wall</div>
+<div class="l add">+                if len(open_neighbors) == 1:</div>
+<div class="l add">+                    candidates = []</div>
+<div class="l add">+                    for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:</div>
+<div class="l add">+                        wx, wy = x + dx, y + dy</div>
+<div class="l add">+                        if (</div>
+<div class="l add">+                            0 &lt; wx &lt; width - 1 and 0 &lt; wy &lt; height - 1</div>
+<div class="l add">+                            and grid[wy][wx] == 1</div>
+<div class="l add">+                            and (wy, wx) not in logo_pos</div>
+<div class="l add">+                        ):</div>
+<div class="l add">+                            candidates.append((wx, wy))</div>
+<div class="l add">+</div>
+<div class="l add">+                    if candidates:</div>
+<div class="l add">+                        wall_to_remove = random.choice(candidates)</div>
+<div class="l add">+                        grid[wall_to_remove[1]][wall_to_remove[0]] = 0</div>
+<div class="l add">+                        if check_open_areas(maze):</div>
+<div class="l add">+                            changed = True</div>
+<div class="l add">+                        else:</div>
+<div class="l add">+                            grid[wall_to_remove[1]][wall_to_remove[0]] = 1</div>
+<div class="l add">+</div>
+<div class="l add">+</div>
+<div class="l add">+class MazeGenerator:</div>
+<div class="l add">+    def __init__(</div>
+<div class="l add">+        self,</div>
+<div class="l add">+        height: int,</div>
+<div class="l add">+        width: int,</div>
+<div class="l add">+        entry: tuple[int, int],</div>
+<div class="l add">+        exit: tuple[int, int],</div>
+<div class="l add">+        perfect: bool,</div>
+<div class="l add">+        seed: int | None = None,</div>
+<div class="l add">+    ) -&gt; None:</div>
+<div class="l add">+        self.height = height</div>
+<div class="l add">+        self.width = width</div>
+<div class="l add">+        self.entry = entry</div>
+<div class="l add">+        self.exit = exit</div>
+<div class="l add">+        self.perfect = perfect</div>
+<div class="l add">+        self.seed = seed</div>
+<div class="l add">+        self.maze: Maze | None = None</div>
+<div class="l add">+        self.path: list[tuple[int, int]] = []</div>
+<div class="l add">+        self.explored: list[tuple[int, int]] = []</div>
+<div class="l add">+</div>
+<div class="l add">+    def create_maze(self) -&gt; Maze:</div>
+<div class="l add">+        if self.seed is not None:</div>
+<div class="l add">+            random.seed(self.seed)</div>
+<div class="l add">+</div>
+<div class="l add">+        for _ in range(1000):</div>
+<div class="l add">+            maze = Maze(self.height, self.width, self.entry, self.exit)</div>
+<div class="l add">+</div>
+<div class="l add">+            # 1. Place &quot;42&quot; pattern first</div>
+<div class="l add">+            logo_pos = add_42_logo(maze)</div>
+<div class="l add">+</div>
+<div class="l add">+            # 2. Build maze corridors around logo</div>
+<div class="l add">+            dfs_generator(maze, logo_pos)</div>
+<div class="l add">+            apply_entry_exit(maze)</div>
+<div class="l add">+</div>
+<div class="l add">+            # 3. Apply Pac-Man parameters if PERFECT=False</div>
+<div class="l add">+            if not self.perfect:</div>
+<div class="l add">+                apply_pacman_corners_and_center(maze, logo_pos)</div>
+<div class="l add">+                remove_dead_ends_and_add_loops(maze, logo_pos)</div>
+<div class="l add">+</div>
+<div class="l add">+            # 4. Enforce 3x3 open area constraint</div>
+<div class="l add">+            if not check_open_areas(maze):</div>
+<div class="l add">+                continue</div>
+<div class="l add">+</div>
+<div class="l add">+            # 5. Solve maze and verify valid path</div>
+<div class="l add">+            path, explored = bfs_solve_maze(maze)</div>
+<div class="l add">+            if path:</div>
+<div class="l add">+                self.maze = maze</div>
+<div class="l add">+                self.path = path</div>
+<div class="l add">+                self.explored = explored</div>
+<div class="l add">+                return maze</div>
+<div class="l add">+</div>
+<div class="l add">+        raise ValueError(&quot;generate_maze(): Could not generate a valid maze.&quot;)</div>
+<div class="l add">+</div>
+<div class="l add">+</div>
+<div class="l add">+def encode_maze_to_hex(maze: Maze) -&gt; list[str]:</div>
+<div class="l add">+    &quot;&quot;&quot;Encodes grid wall states into hexadecimal representation.</div>
+<div class="l add">+</div>
+<div class="l add">+    Outer perimeter borders always retain closed wall bits (1) for</div>
+<div class="l add">+    entry/exit cells on borders.</div>
+<div class="l add">+    &quot;&quot;&quot;</div>
+<div class="l add">+    grid = maze.grid</div>
+<div class="l add">+    hex_rows = []</div>
+<div class="l add">+</div>
+<div class="l add">+    for y in range(maze.height):</div>
+<div class="l add">+        row_str = &quot;&quot;</div>
+<div class="l add">+        for x in range(maze.width):</div>
+<div class="l add">+            gx = x * 2 + 1</div>
+<div class="l add">+            gy = y * 2 + 1</div>
+<div class="l add">+</div>
+<div class="l add">+            # Logo cells (value 2) are just as solid as regular walls (1);</div>
+<div class="l add">+            # only value 0 is an open passage. Checking `== 1` alone left</div>
+<div class="l add">+            # &quot;42&quot;-adjacent walls encoded as open, which is what made</div>
+<div class="l add">+            # logo-boundary cells show up as disconnected-but-not-closed</div>
+<div class="l add">+            # &quot;corridors&quot; instead of proper isolated logo cells.</div>
+<div class="l add">+            wall_bits = 0</div>
+<div class="l add">+            if grid[gy - 1][gx] != 0:</div>
+<div class="l add">+                wall_bits |= 1  # North</div>
+<div class="l add">+            if grid[gy][gx + 1] != 0:</div>
+<div class="l add">+                wall_bits |= 2  # East</div>
+<div class="l add">+            if grid[gy + 1][gx] != 0:</div>
+<div class="l add">+                wall_bits |= 4  # South</div>
+<div class="l add">+            if grid[gy][gx - 1] != 0:</div>
+<div class="l add">+                wall_bits |= 8  # West</div>
+<div class="l add">+</div>
+<div class="l add">+            row_str += format(wall_bits, &quot;x&quot;)</div>
+<div class="l add">+        hex_rows.append(row_str)</div>
+<div class="l add">+</div>
+<div class="l add">+    return hex_rows</div>
+<div class="l add">+</div>
+<div class="l add">+</div>
+<div class="l add">+def path_to_direction(path: list[tuple[int, int]]) -&gt; str:</div>
+<div class="l add">+    &quot;&quot;&quot;Converts coordinate path tuples into cardinal direction string (N, E,</div>
+<div class="l add">+      S, W).&quot;&quot;&quot;</div>
+<div class="l add">+    if len(path) &lt; 2:</div>
+<div class="l add">+        return &quot;&quot;</div>
+<div class="l add">+</div>
+<div class="l add">+    directions = []</div>
+<div class="l add">+    for i in range(len(path) - 1):</div>
+<div class="l add">+        x1, y1 = path[i]</div>
+<div class="l add">+        x2, y2 = path[i + 1]</div>
+<div class="l add">+</div>
+<div class="l add">+        dx = x2 - x1</div>
+<div class="l add">+        dy = y2 - y1</div>
+<div class="l add">+</div>
+<div class="l add">+        if dx &gt; 0:</div>
+<div class="l add">+            directions.append(&quot;E&quot;)</div>
+<div class="l add">+        elif dx &lt; 0:</div>
+<div class="l add">+            directions.append(&quot;W&quot;)</div>
+<div class="l add">+        elif dy &gt; 0:</div>
+<div class="l add">+            directions.append(&quot;S&quot;)</div>
+<div class="l add">+        elif dy &lt; 0:</div>
+<div class="l add">+            directions.append(&quot;N&quot;)</div>
+<div class="l add">+</div>
+<div class="l add">+    return &quot;&quot;.join(directions)</div></div></section>
+<section id="mazegen-solver-py"><h3><code>mazegen/solver.py</code></h3><p class="note">Moved from mazegen_solver.py</p><div class="diff"><div class="l meta">diff --git a/mazegen/solver.py b/mazegen/solver.py</div>
+<div class="l meta">new file mode 100644</div>
+<div class="l meta">index 0000000..7c7db38</div>
+<div class="l meta">--- /dev/null</div>
+<div class="l meta">+++ b/mazegen/solver.py</div>
+<div class="l hunk">@@ -0,0 +1,55 @@</div>
+<div class="l add">+from collections import deque</div>
+<div class="l add">+</div>
+<div class="l add">+from .maze import Maze</div>
+<div class="l add">+</div>
+<div class="l add">+</div>
+<div class="l add">+def bfs_solve_maze(</div>
+<div class="l add">+    maze: Maze,</div>
+<div class="l add">+) -&gt; tuple[list[tuple[int, int]], list[tuple[int, int]]]:</div>
+<div class="l add">+    grid = maze.grid</div>
+<div class="l add">+    height = maze.grid_height</div>
+<div class="l add">+    width = maze.grid_width</div>
+<div class="l add">+    x1, y1 = maze.entry</div>
+<div class="l add">+    x2, y2 = maze.exit</div>
+<div class="l add">+</div>
+<div class="l add">+    # Define paths outside boundaries to map correctly</div>
+<div class="l add">+    entry_x, entry_y = (x1 * 2 + 1), (y1 * 2 + 1)</div>
+<div class="l add">+    exit_x, exit_y = (x2 * 2 + 1), (y2 * 2 + 1)</div>
+<div class="l add">+</div>
+<div class="l add">+    queue = deque([(entry_x, entry_y)])</div>
+<div class="l add">+    visited = {(entry_x, entry_y)}</div>
+<div class="l add">+    explored = []</div>
+<div class="l add">+    parent = {}</div>
+<div class="l add">+</div>
+<div class="l add">+    while queue:</div>
+<div class="l add">+        curr_x, curr_y = queue.popleft()</div>
+<div class="l add">+        explored.append((curr_x, curr_y))</div>
+<div class="l add">+</div>
+<div class="l add">+        if (curr_x, curr_y) == (exit_x, exit_y):</div>
+<div class="l add">+            break</div>
+<div class="l add">+</div>
+<div class="l add">+        for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:</div>
+<div class="l add">+            nx, ny = curr_x + dx, curr_y + dy</div>
+<div class="l add">+            if 0 &lt;= nx &lt; width and 0 &lt;= ny &lt; height:</div>
+<div class="l add">+                if grid[ny][nx] == 0 and (nx, ny) not in visited:</div>
+<div class="l add">+                    visited.add((nx, ny))</div>
+<div class="l add">+                    parent[(nx, ny)] = (curr_x, curr_y)</div>
+<div class="l add">+                    queue.append((nx, ny))</div>
+<div class="l add">+</div>
+<div class="l add">+    # Reconstruct shortest path</div>
+<div class="l add">+    path = []</div>
+<div class="l add">+    curr = (exit_x, exit_y)</div>
+<div class="l add">+    if curr in visited:</div>
+<div class="l add">+        while curr != (entry_x, entry_y):</div>
+<div class="l add">+            path.append(curr)</div>
+<div class="l add">+            curr = parent[curr]</div>
+<div class="l add">+        path.append((entry_x, entry_y))</div>
+<div class="l add">+        path.reverse()</div>
+<div class="l add">+</div>
+<div class="l add">+    # Convert grid coordinates back to cell coordinates (x, y)</div>
+<div class="l add">+    # so that the rest of your program (e.g. path_to_direction) receives</div>
+<div class="l add">+    # expected cell tuples</div>
+<div class="l add">+    path_cells = [(gx // 2, gy // 2) for gx, gy in path]</div>
+<div class="l add">+    explored_cells = [(gx // 2, gy // 2) for gx, gy in explored]</div>
+<div class="l add">+</div>
+<div class="l add">+    return path_cells, explored_cells</div></div></section>
+<section id="a_maze_ing-py"><h3><code>a_maze_ing.py</code></h3><p class="note">Import updated, None-guard added, lint wrapping</p><div class="diff"><div class="l meta">diff --git a/a_maze_ing.py b/a_maze_ing.py</div>
+<div class="l meta">index 4a408aa..9d8fba5 100644</div>
+<div class="l meta">--- a/a_maze_ing.py</div>
+<div class="l meta">+++ b/a_maze_ing.py</div>
+<div class="l hunk">@@ -1,11 +1,12 @@</div>
+<div class="l ctx"> import sys</div>
+<div class="l ctx"> from mazegen_config import ConfigReader</div>
+<div class="l del">-from mazegen_generator import MazeGenerator, encode_maze_to_hex, path_to_direction</div>
+<div class="l add">+from mazegen import MazeGenerator, encode_maze_to_hex, path_to_direction</div>
+<div class="l ctx"> from mazegen_display import print_maze_with_path, THEMES</div>
+<div class="l ctx"> </div>
+<div class="l ctx"> </div>
+<div class="l ctx"> def save_output_file(config_output: str, generator: MazeGenerator) -&gt; None:</div>
+<div class="l del">-    &quot;&quot;&quot;Writes hexadecimal maze grid, entry/exit coordinates, and path to file.&quot;&quot;&quot;</div>
+<div class="l add">+    &quot;&quot;&quot;Writes hexadecimal maze grid, entry/exit coordinates, and path to</div>
+<div class="l add">+    file.&quot;&quot;&quot;</div>
+<div class="l ctx">     if not config_output or not generator.maze:</div>
+<div class="l ctx">         return</div>
+<div class="l ctx"> </div>
+<div class="l hunk">@@ -21,7 +22,10 @@ def save_output_file(config_output: str, generator: MazeGenerator) -&gt; None:</div>
+<div class="l ctx">             f.write(f&quot;{generator.maze.exit[0]},{generator.maze.exit[1]}\n&quot;)</div>
+<div class="l ctx">             f.write(f&quot;{dir_path}\n&quot;)</div>
+<div class="l ctx">     except IOError as e:</div>
+<div class="l del">-        print(f&quot;Error: Could not write output file &#x27;{config_output}&#x27;: {e}&quot;, file=sys.stderr)</div>
+<div class="l add">+        print(</div>
+<div class="l add">+            f&quot;Error: Could not write output file &#x27;{config_output}&#x27;: {e}&quot;,</div>
+<div class="l add">+            file=sys.stderr,</div>
+<div class="l add">+        )</div>
+<div class="l ctx"> </div>
+<div class="l ctx"> </div>
+<div class="l ctx"> def main() -&gt; None:</div>
+<div class="l hunk">@@ -64,6 +68,10 @@ def main() -&gt; None:</div>
+<div class="l ctx">             print(&quot;           A-MAZE-ING            &quot;)</div>
+<div class="l ctx">             print(&quot;=&quot; * 30)</div>
+<div class="l ctx"> </div>
+<div class="l add">+            if generator.maze is None:</div>
+<div class="l add">+                print(&quot;Error: no maze available to display.&quot;, file=sys.stderr)</div>
+<div class="l add">+                sys.exit(1)</div>
+<div class="l add">+</div>
+<div class="l ctx">             current_theme = THEMES[color_index % len(THEMES)]</div>
+<div class="l ctx">             active_path = generator.path if show_path else []</div>
+<div class="l ctx"> </div>
+<div class="l hunk">@@ -73,7 +81,8 @@ def main() -&gt; None:</div>
+<div class="l ctx"> </div>
+<div class="l ctx">             print(&quot;\nInteractive Menu:&quot;)</div>
+<div class="l ctx">             print(&quot;1. Re-generate a new maze&quot;)</div>
+<div class="l del">-            print(f&quot;2. Show/Hide shortest path (Currently: {&#x27;ON&#x27; if show_path else &#x27;OFF&#x27;})&quot;)</div>
+<div class="l add">+            state = &quot;ON&quot; if show_path else &quot;OFF&quot;</div>
+<div class="l add">+            print(f&quot;2. Show/Hide shortest path (Currently: {state})&quot;)</div>
+<div class="l ctx">             print(&quot;3. Change wall colors&quot;)</div>
+<div class="l ctx">             print(&quot;4. Quit&quot;)</div>
+<div class="l ctx"> </div>
+<div class="l hunk">@@ -102,8 +111,11 @@ def main() -&gt; None:</div>
+<div class="l ctx">             print(&quot;\nExiting A-Maze-ing...&quot;)</div>
+<div class="l ctx">             sys.exit(0)</div>
+<div class="l ctx">         except Exception as e:</div>
+<div class="l del">-            print(f&quot;An unexpected error occurred during execution: {e}&quot;, file=sys.stderr)</div>
+<div class="l add">+            print(</div>
+<div class="l add">+                f&quot;An unexpected error occurred during execution: {e}&quot;,</div>
+<div class="l add">+                file=sys.stderr,</div>
+<div class="l add">+            )</div>
+<div class="l ctx"> </div>
+<div class="l ctx"> </div>
+<div class="l ctx"> if __name__ == &quot;__main__&quot;:</div>
+<div class="l del">-    main()</div>
+<div class="l meta">\ No newline at end of file</div>
+<div class="l add">+    main()</div></div></section>
+<section id="mazegen_config-py"><h3><code>mazegen_config.py</code></h3><p class="note">Lint wrapping and type fixes only</p><div class="diff"><div class="l meta">diff --git a/mazegen_config.py b/mazegen_config.py</div>
+<div class="l meta">index 0c89bf4..dd8197b 100644</div>
+<div class="l meta">--- a/mazegen_config.py</div>
+<div class="l meta">+++ b/mazegen_config.py</div>
+<div class="l hunk">@@ -1,7 +1,8 @@</div>
+<div class="l ctx"> import os</div>
+<div class="l del">-from typing import Any, cast</div>
+<div class="l add">+from typing import Any</div>
+<div class="l ctx"> from dataclasses import dataclass</div>
+<div class="l ctx"> </div>
+<div class="l add">+</div>
+<div class="l ctx"> @dataclass</div>
+<div class="l ctx"> class MazeConfig():</div>
+<div class="l ctx">     width: int</div>
+<div class="l hunk">@@ -33,49 +34,69 @@ class ConfigReader():</div>
+<div class="l ctx">                     if not line or line.startswith(&quot;#&quot;):</div>
+<div class="l ctx">                         continue</div>
+<div class="l ctx">                     if &quot;=&quot; not in line:</div>
+<div class="l del">-                        raise ValueError(f&quot;Line {line_num}: Invalid line format (missing &#x27;=&#x27;): &#x27;{line}&#x27;&quot;)</div>
+<div class="l add">+                        raise ValueError(</div>
+<div class="l add">+                            f&quot;Line {line_num}: Invalid line format &quot;</div>
+<div class="l add">+                            f&quot;(missing &#x27;=&#x27;): &#x27;{line}&#x27;&quot;</div>
+<div class="l add">+                        )</div>
+<div class="l ctx"> </div>
+<div class="l ctx">                     key, value = line.split(&quot;=&quot;, 1)</div>
+<div class="l ctx">                     key = key.strip().upper()</div>
+<div class="l ctx">                     value = value.strip()</div>
+<div class="l ctx"> </div>
+<div class="l ctx">                     if key in self.data:</div>
+<div class="l del">-                        raise ValueError(f&quot;Line {line_num}: Duplicate&quot; </div>
+<div class="l add">+                        raise ValueError(f&quot;Line {line_num}: Duplicate&quot;</div>
+<div class="l ctx">                                          f&quot;key &#x27;{key}&#x27; found&quot;)</div>
+<div class="l ctx"> </div>
+<div class="l ctx">                     if key in (&quot;ENTRY&quot;, &quot;EXIT&quot;):</div>
+<div class="l ctx">                         parts = value.split(&quot;,&quot;)</div>
+<div class="l ctx">                         if len(parts) != 2:</div>
+<div class="l del">-                            raise ValueError(f&quot;Line {line_num}: Invalid coordinate format for {key}: &#x27;{value}&#x27;&quot;)</div>
+<div class="l add">+                            raise ValueError(</div>
+<div class="l add">+                                f&quot;Line {line_num}: Invalid coordinate &quot;</div>
+<div class="l add">+                                f&quot;format for {key}: &#x27;{value}&#x27;&quot;</div>
+<div class="l add">+                            )</div>
+<div class="l ctx">                         try:</div>
+<div class="l ctx">                             x, y = int(parts[0].strip()), int(parts[1].strip())</div>
+<div class="l ctx">                             self.data[key] = (x, y)</div>
+<div class="l ctx">                         except ValueError:</div>
+<div class="l del">-                            raise ValueError(f&quot;Line {line_num}: Coordinates for {key} must be integers&quot;)</div>
+<div class="l add">+                            raise ValueError(</div>
+<div class="l add">+                                f&quot;Line {line_num}: Coordinates for {key} &quot;</div>
+<div class="l add">+                                &quot;must be integers&quot;</div>
+<div class="l add">+                            )</div>
+<div class="l ctx"> </div>
+<div class="l ctx">                     elif key == &quot;SEED&quot;:</div>
+<div class="l ctx">                         try:</div>
+<div class="l ctx">                             self.data[key] = int(value)</div>
+<div class="l ctx">                         except ValueError:</div>
+<div class="l del">-                            raise ValueError(f&quot;Line {line_num}: SEED must be an integer, got &#x27;{value}&#x27;&quot;)</div>
+<div class="l add">+                            raise ValueError(</div>
+<div class="l add">+                                f&quot;Line {line_num}: SEED must be an &quot;</div>
+<div class="l add">+                                f&quot;integer, got &#x27;{value}&#x27;&quot;</div>
+<div class="l add">+                            )</div>
+<div class="l ctx"> </div>
+<div class="l ctx">                     elif key == &quot;PERFECT&quot;:</div>
+<div class="l ctx">                         if value.lower() not in (&quot;true&quot;, &quot;false&quot;):</div>
+<div class="l del">-                            raise ValueError(f&quot;Line {line_num}: PERFECT must be True or False, got &#x27;{value}&#x27;&quot;)</div>
+<div class="l add">+                            raise ValueError(</div>
+<div class="l add">+                                f&quot;Line {line_num}: PERFECT must be True &quot;</div>
+<div class="l add">+                                f&quot;or False, got &#x27;{value}&#x27;&quot;</div>
+<div class="l add">+                            )</div>
+<div class="l ctx">                         self.data[key] = value.lower() == &quot;true&quot;</div>
+<div class="l ctx"> </div>
+<div class="l ctx">                     elif key in (&quot;WIDTH&quot;, &quot;HEIGHT&quot;):</div>
+<div class="l ctx">                         try:</div>
+<div class="l ctx">                             val = int(value)</div>
+<div class="l ctx">                             if val &lt; 2:</div>
+<div class="l del">-                                raise ValueError(f&quot;Line {line_num}: {key} must be at least 2&quot;)</div>
+<div class="l add">+                                raise ValueError(</div>
+<div class="l add">+                                    f&quot;Line {line_num}: {key} must be &quot;</div>
+<div class="l add">+                                    &quot;at least 2&quot;</div>
+<div class="l add">+                                )</div>
+<div class="l ctx">                             self.data[key] = val</div>
+<div class="l ctx">                         except ValueError:</div>
+<div class="l del">-                            raise ValueError(f&quot;Line {line_num}: {key} must be an integer&quot;)</div>
+<div class="l add">+                            raise ValueError(</div>
+<div class="l add">+                                f&quot;Line {line_num}: {key} must be an integer&quot;</div>
+<div class="l add">+                            )</div>
+<div class="l ctx"> </div>
+<div class="l ctx">                     else:</div>
+<div class="l ctx">                         self.data[key] = value</div>
+<div class="l del">-        </div>
+<div class="l add">+</div>
+<div class="l ctx">         except Exception as e:</div>
+<div class="l ctx">             raise RuntimeError(f&quot;Failed to parse config file: {e}&quot;) from e</div>
+<div class="l ctx"> </div>
+<div class="l hunk">@@ -93,10 +114,14 @@ class ConfigReader():</div>
+<div class="l ctx"> </div>
+<div class="l ctx">     def in_bounds(self, coord: tuple[int, int]) -&gt; bool:</div>
+<div class="l ctx">         x, y = coord</div>
+<div class="l del">-        return 0 &lt;= x &lt; self.data[&quot;WIDTH&quot;] and 0 &lt;= y &lt; self.data[&quot;HEIGHT&quot;]</div>
+<div class="l add">+        return bool(</div>
+<div class="l add">+            0 &lt;= x &lt; self.data[&quot;WIDTH&quot;] and 0 &lt;= y &lt; self.data[&quot;HEIGHT&quot;]</div>
+<div class="l add">+        )</div>
+<div class="l ctx"> </div>
+<div class="l ctx">     def validate(self) -&gt; None:</div>
+<div class="l del">-        required_keys = [&quot;WIDTH&quot;, &quot;HEIGHT&quot;, &quot;ENTRY&quot;, &quot;EXIT&quot;, &quot;OUTPUT_FILE&quot;, &quot;PERFECT&quot;]</div>
+<div class="l add">+        required_keys = [</div>
+<div class="l add">+            &quot;WIDTH&quot;, &quot;HEIGHT&quot;, &quot;ENTRY&quot;, &quot;EXIT&quot;, &quot;OUTPUT_FILE&quot;, &quot;PERFECT&quot;</div>
+<div class="l add">+        ]</div>
+<div class="l ctx">         for key in required_keys:</div>
+<div class="l ctx">             if key not in self.data:</div>
+<div class="l ctx">                 raise ValueError(f&quot;Missing required configuration key: {key}&quot;)</div>
+<div class="l hunk">@@ -110,4 +135,4 @@ class ConfigReader():</div>
+<div class="l ctx">                 )</div>
+<div class="l ctx"> </div>
+<div class="l ctx">         if self.data[&quot;ENTRY&quot;] == self.data[&quot;EXIT&quot;]:</div>
+<div class="l del">-            raise ValueError(&quot;ENTRY and EXIT coordinates cannot be identical&quot;)</div>
+<div class="l meta">\ No newline at end of file</div>
+<div class="l add">+            raise ValueError(&quot;ENTRY and EXIT coordinates cannot be identical&quot;)</div></div></section>
+<section id="mazegen_display-py"><h3><code>mazegen_display.py</code></h3><p class="note">Import updated, unused import dropped</p><div class="diff"><div class="l meta">diff --git a/mazegen_display.py b/mazegen_display.py</div>
+<div class="l meta">index 96ab0ea..4915fc7 100644</div>
+<div class="l meta">--- a/mazegen_display.py</div>
+<div class="l meta">+++ b/mazegen_display.py</div>
+<div class="l hunk">@@ -1,6 +1,4 @@</div>
+<div class="l del">-import random</div>
+<div class="l del">-</div>
+<div class="l del">-from mazegen_maze import Maze</div>
+<div class="l add">+from mazegen import Maze</div>
+<div class="l ctx"> </div>
+<div class="l ctx"> RESET = &quot;\033[0m&quot;</div>
+<div class="l ctx"> </div>
+<div class="l hunk">@@ -27,7 +25,8 @@ THEMES = [</div>
+<div class="l ctx">     }</div>
+<div class="l ctx"> ]</div>
+<div class="l ctx"> </div>
+<div class="l del">-def print_maze_with_path(maze: Maze, </div>
+<div class="l add">+</div>
+<div class="l add">+def print_maze_with_path(maze: Maze,</div>
+<div class="l ctx">                          path: list[tuple[int, int]],</div>
+<div class="l ctx">                          theme: dict[str, str] | None = None</div>
+<div class="l ctx">                          ) -&gt; None:</div></div></section>
+</main>
+</div>
+</body>
+</html>

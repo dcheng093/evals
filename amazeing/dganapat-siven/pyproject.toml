@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=77.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mazegen"  # Must match the mazegen-* naming rule
+version = "1.0.0"
+description = "A maze generator module"
+readme = "mazegen/README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE.md"]
+dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["."]
+# Restricted to mazegen* so discovery can never sweep venv/ into the build
+include = ["mazegen*"]
