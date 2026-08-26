@@ -1,0 +1,8 @@
+width=90
+HEIGHT=60
+ENTRY=0,0
+EXIT=2,5
+OUTPUT_FILE="maze.txt"
+PERFECT=false
+DELAY=0
+SEED=42

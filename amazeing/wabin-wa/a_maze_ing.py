@@ -1,0 +1,94 @@
+"""Interactive CLI for generating, solving, and displaying mazes.
+
+Reads maze parameters from a config file specified on the command line,
+then loops through generation and an interactive menu that lets the user
+regenerate the maze, toggle the shortest-path overlay, rotate wall
+colours, toggle generation animation, or quit.
+"""
+from mazegen import Maze, MazeGenerator, MazeSolver, Config
+import random
+import os
+import sys
+
+
+def main() -> None:
+    """Run the A-Maze-ing CLI.
+
+    Parses the config file path from sys.argv, seeds the random number
+    generator, then repeatedly generates a maze and solves it, presenting
+    an interactive menu that lets the user re-generate the maze, show or
+    hide the shortest path, rotate wall colours, toggle generation
+    animation, or quit. Exits early (printing an error) if the argument
+    count is wrong or if maze generation/solving raises an exception.
+    """
+
+    if len(sys.argv) != 2:
+        print("wrong format, usage: python3 a_maze_ing.py [config file name]")
+        return
+
+    disp_gen = False
+    show_path = True
+    i = 0
+    colours = [
+            (0, 150, 225), (255, 0, 0), (0, 255, 0),
+            (0, 0, 255), (255, 255, 0), (255, 0, 255)]
+
+    try:
+        config = Config(sys.argv[1])
+        random.seed(config.SEED)
+    except Exception as e:
+        print(e)
+        return
+
+    while True:
+        try:
+            print("\033[?25l", end="")
+            maze = Maze(config.HEIGHT, config.WIDTH, config.ENTRY, config.EXIT)
+            maze_gen = MazeGenerator(maze, config.PERFECT)
+            maze_gen.generate_maze(*colours[i], config.DELAY, disp_gen)
+            maze_sol = MazeSolver(maze)
+            maze_sol.solver()
+            while True:
+                path = [
+                        item[0] for item in maze_sol.solution_path
+                ] if show_path else []
+                frame = maze.render_maze(path, *colours[i])
+                os.system("cls" if os.name == "nt" else "clear")
+                print(frame)
+                print("=== A-Maze_ing ===")
+                if not (config.HEIGHT >= 6 and config.WIDTH >= 9):
+                    print(
+                        "Warning : the dimension can not accomodate 42 pattern"
+                        )
+                print("1. Re-generate a new maze")
+                print("2. Show / Hide the shortest path")
+                print("3. Rotate the wall colours")
+                print(f"4. Toggle animation of generation of the "
+                      f"maze (Status : {'On' if disp_gen else 'Off'})")
+                print("5. Quit")
+                config.save_output(maze.maze_to_hex(), maze_sol.solution_path)
+                choice = input("Choice? (1-5): ")
+                if choice == "1":
+                    break
+                if choice == "2":
+                    show_path = not show_path
+                    continue
+                if choice == "3":
+                    i += 1
+                    i %= len(colours)
+                    continue
+                if choice == "4":
+                    disp_gen = not disp_gen
+                if choice == "5":
+                    return
+
+        except Exception as e:
+            print(e)
+            return
+
+        finally:
+            print("\033[?25h", end="")
+
+
+if __name__ == "__main__":
+    main()
